@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>手術室排程系統</title>
+</head>
+<body>
+    <header>
+        查詢日期
+        <input type="date" id="date">
+        &ensp;
+        <span style= "background:rgb(255, 247, 0)">等待更新時間......
+            <span id="update"></span>
+        </span>
+        <script type="text/javascript">
+            var t = 60;
+            function showTime(){
+                t -= 1;
+                document.getElementById('update').innerHTML= t;
+                
+                if(t==0){
+                    location.href='index.html';
+                }
+
+                setTimeout("showTime()",1000);
+            }
+
+            showTime();
+        </script>
+        &ensp;
+        <span style= "background:rgb(106, 255, 0)">總人數：0 已開刀：0 常規刀尚有：0 急刀尚有：0</span>
+        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+        &emsp;&emsp;&emsp;&emsp;
+        <button type="button">手術平均時間</button>
+        <span style="float:right">使用者：XXX</span>
+          
+        
+            
+    </header>
+    <main>
+        <section class="time">
+
+        </section>
+        <section class="room" style ="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>1號房</th>
+                    <th>2號房</th>
+                    <th>3號房</th>
+                    <th>4號房</th>
+                    <th>5號房</th>
+                    <th>6號房</th>
+                    <th>7號房</th>
+                    <th>8號房</th>
+                    <th>9號房</th>
+                    <th>10號房</th>
+                    <th>11號房</th>
+                    <th>12號房</th>
+                </tr>
+                <tr>
+                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                </tr>
+        
+            </table>
+        </section>
+
+        
+    </main>
+    
+
+    
+        
+
+    
+</body>
+</html>
