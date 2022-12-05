@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const mysql = require('mysql')
+require('dotenv').config();
 
 app.use('/', (req, res) => {
     fs.readFile('./first.html', (err, data) => {
@@ -10,18 +11,18 @@ app.use('/', (req, res) => {
 });
 
 const connect = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '123456789',
-    database: 'operation_data',
-    port: 3306
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    port: process.env.DB_PORT
 });
 
 connect.connect(err => {
     console.log(err);
-});
+});   
 
-var sql = 'show tables';
+var sql = 'select * from 醫生';
 
 connect.query(sql, (err, result) => {
     if(err) {
@@ -29,6 +30,6 @@ connect.query(sql, (err, result) => {
     } else{
         console.log(result);
     }
-}) 
+});
 
 app.listen(3000);
