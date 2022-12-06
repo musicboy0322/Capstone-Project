@@ -2,6 +2,10 @@ header{
     margin: 15px 5px 15px;
 }
 
+header form {
+    display: inline-block;
+}
+
 main{
     display: flex;
 }
