@@ -30,4 +30,9 @@ app.get("/schedule",function(req,res){
     res.sendFile(__dirname + "/operation_schedule_page.html");
 });
 
+app.post("/schedule",encoder,function(req,res){
+    var date = req.body.date;
+    console.log(date);
+});
+
 app.listen(3000);
