@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const {period_change, operation_type_change, return_or_not_change, ana_kind_change} = require('./content_change');
 require('dotenv').config();
 
 const connect_main = mysql.createConnection({
@@ -29,21 +30,22 @@ connect_other.connect(err => {
     } 
 });   
 
-const number = '1111101';
-const cols = ['OR_DATE', 'CHART_NO', 'OR_DUPLICATE_NO', 'VS_NO', 'OR_ROOM_NO_2', 'BED_NO', 'OR_APN', 'EXPECT_OR_START_TIME', 'OR_TYPE_2',
+/*
+let number = '1111101';
+let cols = ['OR_DATE', 'CHART_NO', 'OR_DUPLICATE_NO', 'VS_NO', 'OR_ROOM_NO_2', 'BED_NO', 'OR_APN', 'EXPECT_OR_START_TIME', 'OR_TYPE_2',
                 'RETURN_FLAG', 'AN_CLASS_2', 'NPO_DATE', 'NPO_TIME', 'DIAGNOSIS_CODE', 'DIAGNOSIS_ENGLISH_NAME'];
 
-const need_data = [];
+let need_data = [];
 
-const sql = `select ${cols} from ptor where OR_DATE = ${number} and OR_ROOM_NO_2 != '';`;
+let sql = `select ${cols} from ptor where OR_DATE = ${number} and OR_ROOM_NO_2 != '';`;
 
-const table_count = `select COUNT(OR_DATE) from ptor where OR_DATE = ${number} and OR_ROOM_NO_2 != ''`;
+let table_count = `select COUNT(OR_DATE) from ptor where OR_DATE = ${number} and OR_ROOM_NO_2 != ''`;
 
-const gather_data = connect_other.query(table_count, (err, result) => {
+let gather_data = connect_other.query(table_count, (err, result) => {
     if(err) {
         console.log(err);
     } else {
-        const count = result[0]['COUNT(OR_DATE)'];
+        let count = result[0]['COUNT(OR_DATE)'];
         
         connect_other.query(sql, (err, result) => {
             if(err) {
@@ -54,6 +56,7 @@ const gather_data = connect_other.query(table_count, (err, result) => {
                         need_data.push(result[j][cols[i]]);
                         console.log(need_data);
                     }
+
                     need_data = [];
                 }
                 
@@ -61,6 +64,7 @@ const gather_data = connect_other.query(table_count, (err, result) => {
         });
     }
 });
+
 
 const data = connect_other.query(sql, (err, result) => {
     if(err) {
@@ -72,5 +76,7 @@ const data = connect_other.query(sql, (err, result) => {
         
     }
 });
+*/
 
-module.exports = gather_data;
+module.exports = connect_main;
+
