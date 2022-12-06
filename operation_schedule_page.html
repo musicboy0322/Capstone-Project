@@ -42,7 +42,6 @@
     </header>
     <main>
         <section class="time">
-
         </section>
         <section class="room" style ="overflow-x:auto;">
             <table>
@@ -61,19 +60,141 @@
                     <th>12號房</th>
                 </tr>
                 <tr>
-                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                    <td class="schedule_table">
+                        <button type="submit" class="btn" onclick="openPopup()">
+                            <div>
+                                醫師:蔣小安<br>
+                                病患:劉曉明<br>
+                                床號:1011-3<br>
+                                時間:40(預)/40(平)<br>
+                                麻醉:Y<br>
+                                手術:Cesarean section
+                                </div>
+                        </button>
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
+                    <td class="schedule_table">
+
+                    </td>
                 </tr>
-        
             </table>
+            <div class="popup" id="popup">
+                <br><br>
+                <table border= 1 class="detail">
+                      <tr>
+                        <td>病人姓名</td>
+                        <td>劉曉明</td>
+                        <td>病歷號</td>
+                        <td colspan="3">1131101190</td>
+                      </tr>
+                      <tr>
+                        <td>主治醫師</td>
+                        <td>蔣小安</td>
+                        <td>科別</td>
+                        <td>婦產科</td>
+                        <td>手術別</td>
+                        <td>預約手術</td>
+                      </tr>
+                      <tr>
+                        <td>床號</td>
+                        <td>1011-3</td>
+                        <td>時段</td>
+                        <td>上午</td>
+                        <td>重返手術</td>
+                        <td>否</td>
+                      </tr>
+                      <tr>
+                        <td>預計開始時間</td>
+                        <td>08:00</td>
+                        <td>預計手術時間</td>
+                        <td>1小時</td>
+                        <td>麻諮否</td>
+                        <td>是</td>
+                      </tr>
+                      <tr>
+                        <td>禁食日期</td>
+                        <td>111/10/05</td>
+                        <td>禁食時間</td>
+                        <td>00:01</td>
+                        <td>訪視註記</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>麻醉類別</td>
+                        <td>ETGA</td>
+                        <td>訪視備註</td>
+                        <td colspan="3"></td>
+                      </tr>
+                      <tr>
+                        <td>術前診斷</td>
+                        <td>O63</td>
+                        <td colspan="4">Delayed Labor</td>
+                      </tr>
+                      <tr>
+                        <td>備註</td>
+                        <td colspan="5"></td>
+                      </tr>
+                    </table>
+                    <br>
+                    <table border= 1 class="surgery">
+                        <tr>
+                            <td>手術區分</td>
+                            <td>手術代碼</td>
+                            <td>手術名稱</td>
+                            <td>手術科別</td>
+                            <td colspan="2">主刀醫師</td>
+                        </tr>
+                        <tr>
+                            <td>主手術</td>
+                            <td>0010027</td>
+                            <td>Cesarean section</td>
+                            <td>婦產科</td>
+                            <td colspan="2">蔣小安</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <button type="button" onclick="closePopup()">關閉</button>
+            </div>
         </section>
-
-        
     </main>
+    <script>
+        let popup = document.getElementById("popup");
     
-
-    
-        
-
-    
+        function openPopup(){
+            popup.classList.add("open-popup")
+        }
+        function closePopup(){
+            popup.classList.remove("open-popup")
+        }
+    </script>
 </body>
 </html>
