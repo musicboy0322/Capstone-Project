@@ -1,13 +1,24 @@
 header{
-    margin: 15px 5px 15px;
+    margin: 10px 5px 10px;
 }
 
 header form {
     display: inline-block;
 }
 
+header button {
+    margin: 10px 1px 10px 580px;
+}
+
+.user {
+    margin-top: 10px;
+}
 main{
     display: flex;
+}
+
+.room {
+    margin-left: 100px;
 }
 
 table{
