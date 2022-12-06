@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/schedule.css">
+    <link rel="stylesheet" href="assets/schedule.css">   
     <title>手術室排程系統</title>
 </head>
 <body>
@@ -18,26 +18,24 @@
         </span>
         <script type="text/javascript">
             var t = 60;
-            function showTime(){
-                t -= 1;
-                document.getElementById('update').innerHTML= t;
-                
-                if(t==0){
-                    location.href='operation_schedule_page.html';
+                function showTime(){
+                    t -= 1;
+                    document.getElementById('update').innerHTML= t;
+                    
+                    if(t==0){
+                        location.href='operation_schedule_page.html';
+                    }
+
+                    setTimeout("showTime()",1000);
                 }
+                showTime();
 
-                setTimeout("showTime()",1000);
-            }
-
-            showTime();
         </script>
         &ensp;
         <span style= "background:rgb(106, 255, 0)">總人數：0 已開刀：0 常規刀尚有：0 急刀尚有：0</span>
-        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-        &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-        &emsp;&emsp;&emsp;
         <button type="button">手術平均時間</button>
-        <span style="float:right">使用者：XXX</span>     
+        <span style="float:right" class="user">使用者：XXX</span> 
+            
     </header>
     <main>
         <section class="time">
