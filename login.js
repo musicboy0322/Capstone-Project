@@ -20,7 +20,7 @@ connection.connect(function(error){
 });
 
 app.get("/",function(req,res){
-    res.sendFile(__dirname+ "/sign_in_page.html");
+    res.sendFile(__dirname + "/sign_in_page.html");
 })
 
 app.post("/",encoder,function(req,res){
