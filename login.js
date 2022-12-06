@@ -20,7 +20,7 @@ connection.connect(function(error){
 });
 
 app.get("/",function(req,res){
-    res.sendFile(__dirname+ "/index.html");
+    res.sendFile(__dirname+ "/sign_in_page.html");
 })
 
 app.post("/",encoder,function(req,res){
@@ -38,7 +38,7 @@ app.post("/",encoder,function(req,res){
 })
 
 app.get("/schedule",function(req,res){
-    res.sendFile(__dirname + "/schedule.html")
+    res.sendFile(__dirname + "/operation_schedule_page.html")
 })
 
 app.listen(5000);

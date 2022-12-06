@@ -1,4 +1,29 @@
-*{
-    font-family:微軟正黑體;  
+header{
+    margin: 15px 5px 15px;
+}
+
+main{
+    display: flex;
+}
+
+table{
+    border-collapse: collapse;
+    empty-cells:  show;
+    table-layout: auto;
+    margin-left: auto;
+    width: 1400px;
+}
+
+th{
+    border: 1px solid #000000;
+    background-color: #808080;
+    height: 45px;
+
+}
+
+td{
+    border: 1px solid #000000;
+    background-color:#ffffff;
+    width: 100px;;
+    height:630px;
   }
-  
