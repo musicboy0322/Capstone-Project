@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="assets/schedule.css">   
     <title>手術室排程系統</title>
 </head>
-<!--<label>查詢日期&ensp;<input type="date" id="date" name="date"></label>--> 
 <body>
     <header>
         <form action="" method="post">
@@ -61,8 +60,8 @@
                 </tr>
                 <tr>
                     <td class="schedule_table">
-                        <button type="submit" class="btn" onclick="openPopup()">
-                            <div>
+                        <button type="submit" class="btn">
+                            <div onclick="openPopup()">
                                 醫師:蔣小安<br>
                                 病患:劉曉明<br>
                                 床號:1011-3<br>
@@ -70,6 +69,15 @@
                                 麻醉:Y<br>
                                 手術:Cesarean section
                                 </div>
+                            <form action="" method="post">
+                                <select name="situation" id="situation">
+                                    <option selected>預約</option>
+                                    <option>叫刀</option>
+                                    <option>結束</option>
+                                    <option>返室</option>
+                                    <option>恢復中</option>
+                                </select>
+                            </form>
                         </button>
                     </td>
                     <td class="schedule_table">
