@@ -14,10 +14,11 @@ app.get("/",function(req,res){
 });
 
 app.post("/",encoder,function(req,res){
-    var username = req.body.id;
+    global.ID;
+    ID = req.body.ID;
     var password = req.body.password;
 
-    connection.query("select * from 使用者帳號 where ID = ? and 密碼 = ?",[username,password],function(error,results,fields){
+    connection.query("select * from 使用者帳號 where ID = ? and 密碼 = ?",[ID,password],function(error,results,fields){
         if (results.length > 0){
             res.redirect("/schedule");
         }else{
@@ -31,8 +32,6 @@ app.post("/",encoder,function(req,res){
 
 
 app.get("/schedule",function(req,res){
-    //res.sendFile(__dirname + "/operation_schedule_page.html");
-
     var room = [];
 
     connection.query('select count(房號) from 手術資料 where 房號 != ""', (err, result) => {
@@ -51,7 +50,10 @@ app.get("/schedule",function(req,res){
                 }
             };
            room.pop(); 
-           res.render('operation_schedule_page', {room: room});
+           connection.query(`select 名字 from 使用者帳號 where ID = ${global.ID}`, (err, result) => {
+                username = result[0]['名字'];
+                res.render('operation_schedule_page', {room: room, username: username});
+           })
         });
     });    
 });
@@ -69,6 +71,7 @@ app.post("/schedule",encoder,function(req,res){
             console.log(result);
         }
     });
+    res.end();
 });
 
 app.listen(3000);
