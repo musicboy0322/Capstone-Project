@@ -7,7 +7,7 @@ header form {
 }
 
 header button {
-    margin: 10px 1px 10px 525px;
+    margin: 10px 1px 10px 500px;
 }
 
 .user {
@@ -18,10 +18,11 @@ main{
 }
 
 .room {
-    margin-left: 100px;
+    margin-left: 0px;
+    padding-left: 0%;
 }
 
-table{
+table.number {
     border-collapse: collapse;
     empty-cells:  show;
     table-layout: auto;
@@ -29,20 +30,19 @@ table{
     width: 1400px;
 }
 
-th{
+.room th{
     color: #ffffff;
     font-weight: lighter;
     border: 1px solid #ffffff;
     background-color: #6c6c6c;
     height: 45px;
-
 }
 
 .schedule_table{
     border: 1px solid #6c6c6c;
     background-color:#ffffff;
     width: 100px;;
-    height:3780px;
+    height:4257px;
   }
 .btn{
     background: #fff;
