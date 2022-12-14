@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/schedule.css">   
+    <link rel="stylesheet" href="../assets/schedule.css">
+    <link rel="stylesheet" href="../assets/timeline.css">
     <title>手術室排程系統</title>
 </head>
 <body>
@@ -14,13 +15,12 @@
             <input type = 'submit' value="提交">&ensp;
         </form>
         <span style= "background:rgb(255, 247, 0)">等待更新時間......
-            <span id="update" runat = "server"></span>
         </span>
         &ensp;
         <span style= "background:rgb(106, 255, 0)">總人數：0 已開刀：0 常規刀尚有：0 急刀尚有：0</span>
         <button type="button">手術平均時間</button>
         <span style="float:right" class="user">使用者：<%= username%> </span> 
-    
+
     </header>
     <main>
         <section class="time">
@@ -51,6 +51,7 @@
             </div>
         </section>
         <section class="room" style ="overflow-x:auto;">
+            <div id="k"></div>
             <table>
                 <tr>
                     <% for(let i = 0; i < room.length; i++) { %>
@@ -59,7 +60,11 @@
                 </tr>
                 <tr>
                     <td class="schedule_table">
-                        
+                        <button type="submit" class="btn">
+                            <div onclick="openPopup()">
+                                醫師:<span class ='doc'><br></span>              
+                            </div>
+                        </button>
                     </td>
                     <td class="schedule_table">
 

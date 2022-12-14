@@ -7,7 +7,7 @@ header form {
 }
 
 header button {
-    margin: 10px 1px 10px 500px;
+    margin: 10px 1px 10px 490px;
 }
 
 .user {
@@ -48,7 +48,7 @@ table.number {
     background: #fff;
     border: 1;
     text-align: left;
-    width: auto;
+    width: 100px;
     height: auto;
     border-radius: 6px;
     margin: 10px 0.1px 3000px;

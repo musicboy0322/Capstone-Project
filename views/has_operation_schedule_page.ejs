@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/schedule.css">   
+    <link rel="stylesheet" href="../assets/schedule.css">
+    <link rel="stylesheet" href="../assets/timeline.css">  
     <title>手術室排程系統</title>
 </head>
 <body>
@@ -14,27 +15,39 @@
             <input type = 'submit' value="提交">&ensp;
         </form>
         <span style= "background:rgb(255, 247, 0)">等待更新時間......
-            <%= time =><!--<span id="update" runat = "server"></span>-->
+            <span id="update"></span>
         </span>
-<!--
-        <script type="text/javascript">
-            var t = 60;
-                function showTime(){
-                    t -= 1;
-                    document.getElementById('update').innerHTML= t;
-                    
-                    if(t==0){
-                        //location.href='http://localhost:3000/operation_schedule_page.html';
-                        t=60;
-                    }
 
+        <script src="https://code.jquery.com/jquery-latest.js"></script>
+
+        <script type="text/javascript">
+            var t = 10;
+                function showTime(){
+                    if(t==0){
+                        $.ajax({
+                            url: 'http://localhost:3000/schedule/operation/data',
+                            method:'GET',
+                            dataType:'json',
+                            success: function(res) {
+                                let data = res;
+                                let doctorName = data['doctorName'];
+                                console.log(doctorName);
+                                $('.doc').text(doctorName);
+                            },
+                            error:function(err) {console.log('error')}
+                        });
+                        t = 10;
+                    };
+                    document.getElementById('update').innerHTML= t;
+                    console.log(t);
+                    t -= 1;
                     setTimeout('showTime()',1000);
                 };
 
-                showTime();
+            showTime();
 
         </script>
--->
+
         
         &ensp;
         <span style= "background:rgb(106, 255, 0)">總人數：<%=totalOperation%> 已開刀：0 常規刀尚有：<%= reserveOperation %>急刀尚有：<%= urgentOperation %></span>
@@ -81,12 +94,12 @@
                     <td class="schedule_table">
                         <button type="submit" class="btn">
                             <div onclick="openPopup()">
-                                醫師:<%= doctorName%><br>
+                                醫師:<span class = 'doc'><%= doctorName%></span><br>
                                 病患:<%= patientName%><br>
                                 床號:<%= operationData['床號']%><br>
                                 時間:<%= operationData['開刀預估時間']%><br>
                                 麻醉:<%= operationData['是否麻醉']%><br>
-                                手術:<%= operationData['手術名稱']%>
+                                手術:<br><%= operationData['手術名稱'].substr(0,9)%>...
                             </div>
                             <form action="" method="post">
                                 <select name="situation" id="situation">

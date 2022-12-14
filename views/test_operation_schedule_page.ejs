@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head runat = 'server'>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/test.css">
+    <title>手術室排程系統</title>
+</head>
+<body>
+    <header>
+        <form action="" method="post">
+            <label>查詢日期&ensp;<input type="date" id="date" name="date"></label>
+            <input type = 'submit' value="提交">&ensp;
+        </form>
+        <span style= "background:rgb(255, 247, 0)">等待更新時間......
+        </span>
+        &ensp;
+        <span style= "background:rgb(106, 255, 0)">總人數：0 已開刀：0 常規刀尚有：0 急刀尚有：0</span>
+        <button type="button">手術平均時間</button>
+        <span style="float:right" class="user">使用者：<%= username %> </span> 
+    </header>
+    <main>
+        <div class="calendar-container">
+            
+            <div class="header">
+                <ul class="operation-room">
+                    <% for(let i = 0; i < room.length; i++) { %>
+                        <li><%= room[i] %>號房</li>
+                    <% }; %>
+                </ul>
+            </div>
+    
+            <div class="timeslots-container">
+                <ul class="timeslots">
+                    <li>00:00</li>
+                    <li>01:00</li>
+                    <li>02:00</li>
+                    <li>03:00</li>
+                    <li>04:00</li>
+                    <li>05:00</li>
+                    <li>06:00</li>
+                    <li>07:00</li>
+                    <li>08:00</li>
+                    <li>09:00</li>
+                    <li>10:00</li>
+                    <li>11:00</li>
+                    <li>12:00</li>
+                    <li>13:00</li>
+                    <li>14:00</li>
+                    <li>15:00</li>
+                    <li>16:00</li>
+                    <li>17:00</li>
+                    <li>18:00</li>
+                    <li>19:00</li>
+                    <li>20:00</li>
+                    <li>21:00</li>
+                    <li>22:00</li>
+                    <li>23:00</li>
+                </ul>
+            </div>
+        
+            <div class="event-container">
+
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>

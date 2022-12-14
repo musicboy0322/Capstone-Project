@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head runat = 'server'>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/test.css"> 
+    <title>手術室排程系統</title>
+</head>
+<body>
+    <header>
+        <form action="" method="post">
+            <label>查詢日期&ensp;<input type="date" id="date" name="date"></label>
+            <input type = 'submit' value="提交">&ensp;
+        </form>
+        <span style= "background:rgb(255, 247, 0)">等待更新時間......
+            <span id="update"></span>
+        </span>
+
+        <script src="https://code.jquery.com/jquery-latest.js"></script>
+
+        <script type="text/javascript">
+            var t = 10;
+                function showTime(){
+                    if(t==0){
+                        $.ajax({
+                            url: 'http://localhost:3000/schedule/operation/data',
+                            method:'GET',
+                            dataType:'json',
+                            success: function(res) {
+                                let data = res;
+                                let doctorName = data['doctorName'];
+                                console.log(doctorName);
+                                $('.doc').text(doctorName);
+                            },
+                            error:function(err) {console.log('error')}
+                        });
+                        t = 10;
+                    };
+                    document.getElementById('update').innerHTML= t;
+                    console.log(t);
+                    t -= 1;
+                    setTimeout('showTime()',1000);
+                };
+
+            //showTime();
+
+        </script>
+
+        
+        &ensp;
+        <span style= "background:rgb(106, 255, 0)">總人數：<%=totalOperation%> 已開刀：0 常規刀尚有：<%= reserveOperation %>急刀尚有：<%= urgentOperation %></span>
+        <button type="button">手術平均時間</button>
+        <span style="float:right" class="user">使用者：<%= username%> </span> 
+    
+    </header>
+    <div class="calendar-container">
+            
+        <div class="header">
+            <ul class="operation-room">
+                <% for(let i = 0; i < room.length; i++) { %>
+                    <li><%= room[i] %>號房</li>
+                <% }; %>
+            </ul>
+        </div>
+
+        <div class="timeslots-container">
+            <ul class="timeslots">
+                <li>00:00</li>
+                <li>01:00</li>
+                <li>02:00</li>
+                <li>03:00</li>
+                <li>04:00</li>
+                <li>05:00</li>
+                <li>06:00</li>
+                <li>07:00</li>
+                <li>08:00</li>
+                <li>09:00</li>
+                <li>10:00</li>
+                <li>11:00</li>
+                <li>12:00</li>
+                <li>13:00</li>
+                <li>14:00</li>
+                <li>15:00</li>
+                <li>16:00</li>
+                <li>17:00</li>
+                <li>18:00</li>
+                <li>19:00</li>
+                <li>20:00</li>
+                <li>21:00</li>
+                <li>22:00</li>
+                <li>23:00</li>
+            </ul>
+        </div>
+    
+        <div class="event-container">
+            
+        </div>
+
+    </div>
+
+    <script>
+        var events = [];
+        const colors = [
+        "red",
+        "green",
+        "blue",
+        "yellow",
+        "purple",
+        "cyan",
+        "gray",
+        "limegreen",
+        "pink",
+        "orange",
+        "magenta"
+        ];
+        var businessStartHours = 0;
+        var timeslotInterval = 1;
+        const daysInaWeek = 12;
+        var eventContainer = document.getElementsByClassName("event-container")[0];
+        var sections = daysInaWeek;
+        var eventsByDay = {};
+        var id = 1;
+
+        inputRoom();
+    
+        function inputRoom() {
+            
+            var data = {
+                date: '<%= taiwanDate %>',
+                doctorName: '<%= doctorName %>',
+                department: '<%= department %>',
+                patientName: '<%= patientName %>',
+                operationRoom: '<%= operationData["房號"] %>',
+                bed: '<%= operationData["床號"] %>',
+                estimateTime: '<%= operationData["開刀預估時間"] %>',
+                anaYesNo: '<%= operationData["是否麻醉"] %>',
+                operationName: '<%= operationData["手術名稱"] %>',
+                chart: '<%= operationData["病歷號"] %>',
+                operationKind: '<%= operationData["手術別"] %>',
+                time: '<%= operationData["時段"] %>',
+                operationAgain: '<%= operationData["重返手術"]%>',
+                estimateStartTime: '<%= operationData["預估開始時間"] %>',
+                fastingDate: '<%= operationData["禁食日期"] %>',
+                fastingTime: '<%= operationData["禁食時間"] %>',
+                anaKind: '<%= operationData["麻醉類別"]%>',
+                diagnosisCode: '<%= operationData["術前診斷代碼"] %>',
+                diagnosisName: '<%= operationData["術前診斷"] %>',
+                operationCode: '<%= operationData["手術代碼"]%>',
+            };
+            
+            id++;
+            eventContainer.innerHTML = "";
+            events = [];
+            events.push(data);
+            processEvents();
+            loadEvents();
+            
+        };
+    
+    
+    function processEvents() {
+        events.forEach(data => {
+            const cell = getCell(data.estimateStartTime);
+    
+            if (!eventsByDay[data.date]) {
+            eventsByDay[data.date] = {};
+            eventsByDay[data.date][cell] = [];
+            }
+    
+            if (!eventsByDay[data.date][cell]) {
+            eventsByDay[data.date][cell] = [];
+            }
+    
+            eventsByDay[data.date][cell].push(data);
+        });
+    }
+    
+    function getCell(starttime) {
+        const h = +starttime.split(":")[0];
+        return h - businessStartHours;
+    }
+    
+    function loadEvents() {
+        Object.keys(eventsByDay).forEach(e => {
+            const eventsForThisDay = eventsByDay[e];
+            Object.keys(eventsForThisDay).forEach(c => {
+            const events = eventsForThisDay[c];
+            //events.sort(sortcomparer);
+            var totalEventsPerCell = events.length;
+            var offset = 0;
+    
+            for (var i = 0; i < events.length; i++) {
+                var event = events[i];
+
+                const colPos = getColumnPosition(event.operationRoom);
+
+                const perc = 100 / (sections + 1 - colPos);
+                
+                const percW = Math.floor(perc / totalEventsPerCell);
+
+                var wMultiplier = 1.5;
+                if (offset === totalEventsPerCell - 1) {
+                wMultiplier = 0.95;
+                }
+    
+                event["width"] = percW * wMultiplier;
+                event["left"] = percW * offset;
+                renderEvent(event);
+                
+                ++offset;
+            }
+            });
+        });
+    }
+    
+    function renderEvent(evt) {
+        var oneEvent = document.createElement("div");
+        var eventDoctor = document.createElement("div");
+        var eventPatient = document.createElement("div");
+        var eventBed = document.createElement("div");
+        var eventTime = document.createElement("div");
+        var eventAna = document.createElement("div");
+        var eventOperation = document.createElement("div");
+        const color = Math.floor(Math.random() * colors.length);
+
+        //加內容的地方
+        eventDoctor.innerHTML = `醫生: ${evt.doctorName}`;
+        eventPatient.innerHTML = `病患: ${evt.patientName}`;
+        eventBed.innerHTML = `床號: ${evt.bed}`;
+        eventTime.innerHTML = `時間: ${evt.estimateTime}`;
+        eventAna.innerHTML = `麻醉: ${evt.anaYesNo}`;
+        eventOperation.innerHTML = `手術: ${evt.operationName}`;
+    
+        oneEvent.appendChild(eventDoctor);
+        oneEvent.appendChild(eventPatient);
+        oneEvent.appendChild(eventBed);
+        oneEvent.appendChild(eventTime);
+        oneEvent.appendChild(eventAna);
+        oneEvent.appendChild(eventOperation);
+        
+        eventDoctor.setAttribute("class", "event-docotr");
+        eventPatient.setAttribute("class", "event-patient");
+        eventBed.setAttribute("class", "event-bed");
+        eventTime.setAttribute("class", "event-time");
+        eventAna.setAttribute("class", "ana");
+        eventOperation.setAttribute("class", "event-operation");
+        oneEvent.setAttribute("class", "slot");
+    
+        oneEvent.style.background = colors[color];
+        oneEvent.style.width = evt.width + "%";
+        oneEvent.style.left = evt.left + "%";
+        oneEvent.style.zIndex = evt.zindex;
+        oneEvent.style.height = evt.estimateTime + "px";
+    
+        oneEvent.style.gridColumnStart = getColumnPosition(evt.operationRoom);
+        oneEvent.style.gridRowStart = getRowPosition(evt.estimateStartTime);
+
+
+        eventContainer.appendChild(oneEvent);
+    }
+
+    function getColumnPosition(roomNumber) {
+        let number = 1;
+        let room = '<%= room %>'.split(',');
+        for(let i = 0; i < room.length; i++) {
+            if(room[i] == roomNumber) {
+                return number;
+            } else {
+                number += 1;
+            }
+        };
+    };
+    
+    function getRowPosition(startTime) {
+        const h = parseInt(startTime.split(":")[0]);
+        const m = parseInt(startTime.split(":")[1]);
+        const totalMinutes = (Math.abs(businessStartHours - h)) * 60 + m;
+        const rowPos = totalMinutes / timeslotInterval;
+        console.log(rowPos);
+        return rowPos;
+    }
+    
+    
+    
+    </script>
+</main>
+    
+</body>
+</html>

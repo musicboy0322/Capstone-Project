@@ -3,7 +3,11 @@ const app = express();
 const fs = require('fs');
 const connection = require('./database_connecting');
 const bodyParser = require("body-parser");
+const { nextTick } = require('process');
 const encoder = bodyParser.urlencoded();
+
+
+require('events').EventEmitter.prototype._maxListeners = 100;
 
 app.set('view engine', 'ejs');
 
@@ -56,8 +60,8 @@ app.get("/schedule",function(req,res){
            //username
            connection.query(`select 名字 from 使用者帳號 where ID = ${global.ID}`, (err, result) => {
                 username = result[0]['名字'];
-                res.render('operation_schedule_page', {room: room, username: username});
-           })
+                res.render('test_operation_schedule_page', {room: room, username: username});
+           });
         });
     });    
     
@@ -74,9 +78,8 @@ app.post("/schedule",encoder,function(req,res){
     res.end();
 });
 
-app.get("/schedule/operation",function(req,res){
+app.get("/schedule/operation",function(req,res,next){
     var room = [];
-    let time = 60;
 
     //len
     connection.query('select count(房號) from 手術資料 where 房號 != ""', (err, result) => {
@@ -97,59 +100,47 @@ app.get("/schedule/operation",function(req,res){
             };
            room.pop(); 
 
-           //user name
-           connection.query(`select 名字 from 使用者帳號 where ID = ${global.ID}`, (err, result) => {
-                let username = result[0]['名字'];
-
-                //operation data
-                connection.query(`select * from 手術資料 where 手術日期 = ${taiwanDate} and 開刀預估時間 != '0' and 房號 != ''`, (err, result) => {
-                    let totalOperation = result.length;
-                    let urgentOperation = 0;
-                    let reserveOperation = 0;
-                    for(let k = 0; k < totalOperation; k++) {
-                        if(result[k]['手術別'] == '緊急手術') {
-                            urgentOperation += 1;
-                        } else if(result[k]['手術別'] == '預約手術') {
-                            reserveOperation += 1;
-                        }
+            //operation data
+            connection.query(`select * from 手術資料 where 手術日期 = ${global.taiwanDate} and 開刀預估時間 != '0' and 房號 != ''`, (err, result) => {
+                let totalOperation = result.length;
+                let urgentOperation = 0;
+                let reserveOperation = 0;
+                for(let k = 0; k < totalOperation; k++) {
+                    if(result[k]['手術別'] == '緊急手術') {
+                        urgentOperation += 1;
+                    } else if(result[k]['手術別'] == '預約手術') {
+                        reserveOperation += 1;
                     }
-                    let operationData = result[2];
+                }
+                let operationData = result[totalOperation-1];
 
-                    //doctor name
-                    connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData['醫生編號']}`, (err, result) => {
-                        let doctorName = result[0]['醫生姓名'];
-                        
-                        //department
-                        connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData['手術科別']}`, (err, result) => {
-                            let department = result[0]['科別名稱'];
+                //doctor name
+                connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData['醫生編號']}`, (err, result) => {
+                    let doctorName = result[0]['醫生姓名'];
 
-                            //patient name
-                            connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData['病歷號']}` , (err, result) => {
-                                let patientName = result[0]['病患姓名'];
-                                for(let q = 0; q < 61; q--) {
-                                    if(time < 0) {
-                                        res.redirect('back');
-                                    } else {
-                                        res.render('has_operation_schedule_page', {room: room, username: username, operationData: operationData, 
-                                            doctorName:doctorName, department: department, patientName: patientName, totalOperation: totalOperation,
-                                            urgentOperation: urgentOperation, reserveOperation: reserveOperation, time: time});
-                                    }
-                                    time--;
-                                }
-                                
-                            });
+                    //department
+                    connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData['手術科別']}`, (err, result) => {
+                        let department = result[0]['科別名稱'];
+
+                        //patient name
+                        connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData['病歷號']}` , (err, result) => {
+                            let patientName = result[0]['病患姓名'];
+
+                            res.render('test_has_operation_schedule', {room: room, username: username, operationData: operationData, 
+                                doctorName:doctorName, department: department, patientName: patientName, totalOperation: totalOperation,
+                                urgentOperation: urgentOperation, reserveOperation: reserveOperation, taiwanDate: global.taiwanDate});
                         });
                     });
-                    
                 });
-               
-           })
+            });
         });
     });    
 });
 
+
 app.post("/schedule/operation",encoder,function(req,res){
-    let date = req.body.date;
+    global.date;
+    date = req.body.date;
     let dateSplit = date.split('-');
     taiwanYear = parseInt(dateSplit[0])-1911;
     global.taiwanDate;
@@ -159,4 +150,47 @@ app.post("/schedule/operation",encoder,function(req,res){
     res.end();
 });
 
+app.get("/schedule/operation/data", function(req, res) {
+    //operation data
+    connection.query(`select * from 手術資料 where 手術日期 = ${global.taiwanDate} and 開刀預估時間 != '0' and 房號 != ''`, (err, result) => {
+        let totalOperation = result.length;
+        let urgentOperation = 0;
+        let reserveOperation = 0;
+        for(let k = 0; k < totalOperation; k++) {
+            if(result[k]['手術別'] == '緊急手術') {
+                urgentOperation += 1;
+            } else if(result[k]['手術別'] == '預約手術') {
+                reserveOperation += 1;
+            }
+        }
+        let operationData = result[totalOperation-1];
+
+        //doctor name
+        connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData['醫生編號']}`, (err, result) => {
+            let doctorName = result[0]['醫生姓名'];
+
+            //department
+            connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData['手術科別']}`, (err, result) => {
+                let department = result[0]['科別名稱'];
+
+                //patient name
+                connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData['病歷號']}` , (err, result) => {
+                    let patientName = result[0]['病患姓名'];
+
+                    res.json({'doctorName': doctorName, 'department': department, 'patientName': patientName, 'operationData': operationData});
+                });
+            });
+        });
+            
+    });
+       
+});
+
+
 app.listen(3000);
+
+/*
+res.render('has_operation_schedule_page', {room: room, username: username, operationData: operationData, 
+    doctorName:doctorName, department: department, patientName: patientName, totalOperation: totalOperation,
+    urgentOperation: urgentOperation, reserveOperation: reserveOperation, date: global.date});
+*/
