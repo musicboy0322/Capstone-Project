@@ -3,9 +3,8 @@ const app = express();
 const fs = require('fs');
 const connection = require('./database_connecting');
 const bodyParser = require("body-parser");
-const { nextTick } = require('process');
 const encoder = bodyParser.urlencoded();
-
+const splitData = require('./content_change');
 
 require('events').EventEmitter.prototype._maxListeners = 100;
 
@@ -78,8 +77,11 @@ app.post("/schedule",encoder,function(req,res){
     res.end();
 });
 
-app.get("/schedule/operation",function(req,res,next){
-    var room = [];
+app.get("/schedule/operation",function(req,res){
+    let room = [];
+    let doctorName = [];
+    let department = [];
+    let patientName = [];
 
     //len
     connection.query('select count(房號) from 手術資料 where 房號 != ""', (err, result) => {
@@ -112,26 +114,40 @@ app.get("/schedule/operation",function(req,res,next){
                         reserveOperation += 1;
                     }
                 }
-                let operationData = result[totalOperation-1];
+                let operationData = result;
+                
+                for(let h = 0; h < totalOperation; h++) {
 
-                //doctor name
-                connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData['醫生編號']}`, (err, result) => {
-                    let doctorName = result[0]['醫生姓名'];
+                    //doctor name
+                    connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData[h]['醫生編號']}`, (err, result) => {
+                        doctorName.push(result[0]['醫生姓名']);
+                        //department
+                        connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData[h]['手術科別']}`, (err, result) => {
+                            department.push(result[0]['科別名稱']);
 
-                    //department
-                    connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData['手術科別']}`, (err, result) => {
-                        let department = result[0]['科別名稱'];
+                            //patient name
+                            connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData[h]['病歷號']}` , (err, result) => {
+                                patientName.push(result[0]['病患姓名']);
 
-                        //patient name
-                        connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData['病歷號']}` , (err, result) => {
-                            let patientName = result[0]['病患姓名'];
+                                if(h+1 == totalOperation) {
+                                    
+                                    let data = splitData(operationData, totalOperation);
 
-                            res.render('test_has_operation_schedule', {room: room, username: username, operationData: operationData, 
-                                doctorName:doctorName, department: department, patientName: patientName, totalOperation: totalOperation,
-                                urgentOperation: urgentOperation, reserveOperation: reserveOperation, taiwanDate: global.taiwanDate});
+                                    res.render('test_has_operation_schedule', 
+                                        {room: room, username: username, bed: data.bed, operationRoom: data.operationRoom,estimateTime: data.estimateTime,
+                                        anaYesNo: data.anaYesNo, operationName: data.operationName, chart: data.chart, operationKind: data.operationKind,
+                                        time: data.time, operationAgain: data. operationAgain, estimateStartTime: data.estimateStartTime, fastingDate: data.fastingDate,
+                                        fastingTime: data.fastingTime, anaKind: data.anaKind, diagnosisCode: data.diagnosisCode, diagnosisName: data.diagnosisName,
+                                        operationCode: data.operationCode,doctorName:doctorName, department: department, patientName: patientName,
+                                        totalOperation: totalOperation,urgentOperation: urgentOperation, reserveOperation: reserveOperation, taiwanDate: global.taiwanDate});
+
+                                }
+                                
+                            });
                         });
                     });
-                });
+                }
+                
             });
         });
     });    

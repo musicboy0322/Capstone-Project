@@ -30,7 +30,7 @@
                             dataType:'json',
                             success: function(res) {
                                 let data = res;
-                                let doctorName = data['doctorName'];
+                                let doctorName = data['operationData']['床號'];
                                 console.log(doctorName);
                                 $('.doc').text(doctorName);
                             },
@@ -94,12 +94,12 @@
                     <td class="schedule_table">
                         <button type="submit" class="btn">
                             <div onclick="openPopup()">
-                                醫師:<span class = 'doc'><%= doctorName%></span><br>
+                                醫師:<%= doctorName%><br>
                                 病患:<%= patientName%><br>
-                                床號:<%= operationData['床號']%><br>
+                                床號:<span class = 'doc'><%= operationData['床號']%></span><br>
                                 時間:<%= operationData['開刀預估時間']%><br>
                                 麻醉:<%= operationData['是否麻醉']%><br>
-                                手術:<br><%= operationData['手術名稱'].substr(0,9)%>...
+                                手術:<br><%= operationData['手術名稱'] %>
                             </div>
                             <form action="" method="post">
                                 <select name="situation" id="situation">
