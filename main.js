@@ -103,7 +103,7 @@ app.get("/schedule/operation",function(req,res){
            room.pop(); 
 
             //operation data
-            connection.query(`select * from 手術資料 where 手術日期 = ${global.taiwanDate} and 開刀預估時間 != '0' and 房號 != ''`, (err, result) => {
+            connection.query(`select * from 手術資料 where 手術日期 = ${global.taiwanDate} and 開刀預估時間 != '0' and 房號 != '' and 房號 != 'DR'`, (err, result) => {
                 let totalOperation = result.length;
                 let urgentOperation = 0;
                 let reserveOperation = 0;
@@ -167,8 +167,13 @@ app.post("/schedule/operation",encoder,function(req,res){
 });
 
 app.get("/schedule/operation/data", function(req, res) {
-    //operation data
-    connection.query(`select * from 手術資料 where 手術日期 = ${global.taiwanDate} and 開刀預估時間 != '0' and 房號 != ''`, (err, result) => {
+
+    let doctorName = [];
+    let department = [];
+    let patientName = [];
+    
+   //operation data
+   connection.query(`select * from 手術資料 where 手術日期 = ${global.taiwanDate} and 開刀預估時間 != '0' and 房號 != '' and 房號 != 'DR'`, (err, result) => {
         let totalOperation = result.length;
         let urgentOperation = 0;
         let reserveOperation = 0;
@@ -179,34 +184,44 @@ app.get("/schedule/operation/data", function(req, res) {
                 reserveOperation += 1;
             }
         }
-        let operationData = result[totalOperation-1];
+        let operationData = result;
+        
+        for(let h = 0; h < totalOperation; h++) {
 
-        //doctor name
-        connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData['醫生編號']}`, (err, result) => {
-            let doctorName = result[0]['醫生姓名'];
+            //doctor name
+            connection.query(`select 醫生姓名 from 醫生 where 醫生編號 = ${operationData[h]['醫生編號']}`, (err, result) => {
+                doctorName.push(result[0]['醫生姓名']);
+                //department
+                connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData[h]['手術科別']}`, (err, result) => {
+                    department.push(result[0]['科別名稱']);
 
-            //department
-            connection.query(`select 科別名稱 from 科別 where 科別代碼 = ${operationData['手術科別']}`, (err, result) => {
-                let department = result[0]['科別名稱'];
+                    //patient name
+                    connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData[h]['病歷號']}` , (err, result) => {
+                        patientName.push(result[0]['病患姓名']);
 
-                //patient name
-                connection.query(`select 病患姓名 from 病患 where 病歷號 = ${operationData['病歷號']}` , (err, result) => {
-                    let patientName = result[0]['病患姓名'];
+                        if(h+1 == totalOperation) {
+                            
+                            let data = splitData(operationData, totalOperation);
 
-                    res.json({'doctorName': doctorName, 'department': department, 'patientName': patientName, 'operationData': operationData});
+                            res.json( 
+                                {bed: data.bed, operationRoom: data.operationRoom,estimateTime: data.estimateTime,anaYesNo: data.anaYesNo,
+                                operationName: data.operationName, chart: data.chart, operationKind: data.operationKind,time: data.time,
+                                operationAgain: data.operationAgain, estimateStartTime: data.estimateStartTime, fastingDate: data.fastingDate,
+                                fastingTime: data.fastingTime, anaKind: data.anaKind, diagnosisCode: data.diagnosisCode,
+                                diagnosisName: data.diagnosisName,operationCode: data.operationCode,doctorName:doctorName,
+                                department: department, patientName: patientName,totalOperation: totalOperation,
+                                urgentOperation: urgentOperation, reserveOperation: reserveOperation, taiwanDate: global.taiwanDate}
+                            );
+
+                        }
+                    });
                 });
             });
-        });
-            
+        }
     });
-       
 });
 
 
 app.listen(3000);
 
-/*
-res.render('has_operation_schedule_page', {room: room, username: username, operationData: operationData, 
-    doctorName:doctorName, department: department, patientName: patientName, totalOperation: totalOperation,
-    urgentOperation: urgentOperation, reserveOperation: reserveOperation, date: global.date});
-*/
+//res.json({'doctorName': doctorName, 'department': department, 'patientName': patientName, 'operationData': operationData});

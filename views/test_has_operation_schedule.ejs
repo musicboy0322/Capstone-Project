@@ -19,33 +19,7 @@
 
         <script src="https://code.jquery.com/jquery-latest.js"></script>
 
-        <script type="text/javascript">
-            var t = 10;
-                function showTime(){
-                    if(t==0){
-                        $.ajax({
-                            url: 'http://localhost:3000/schedule/operation/data',
-                            method:'GET',
-                            dataType:'json',
-                            success: function(res) {
-                                let data = res;
-                                let doctorName = data['doctorName'];
-                                console.log(doctorName);
-                                $('.doc').text(doctorName);
-                            },
-                            error:function(err) {console.log('error')}
-                        });
-                        t = 10;
-                    };
-                    document.getElementById('update').innerHTML= t;
-                    console.log(t);
-                    t -= 1;
-                    setTimeout('showTime()',1000);
-                };
-
-            //showTime();
-
-        </script>
+        
 
         
         &ensp;
@@ -100,6 +74,7 @@
     </div>
 
     <script>
+        //匯入手術資料的部分
         var events = [];
         const colors = [
         "red",
@@ -123,6 +98,10 @@
         var id = 1;
 
         inputRoom();
+
+        //時間到要更新手術資料的部分
+        var t = 20;
+        showTime();
     
         function inputRoom() {
 
@@ -181,7 +160,9 @@
             }
             
             loadEvents();
-            
+
+            eventsByDay = {};
+            id = 1;
         };
     
     
@@ -307,10 +288,66 @@
         const m = parseInt(startTime.split(":")[1]);
         const totalMinutes = (Math.abs(businessStartHours - h)) * 60 + m;
         const rowPos = totalMinutes / timeslotInterval;
-        console.log(rowPos);
         return rowPos;
     }
     
+    function showTime(){
+            if(t==0){
+                $.ajax({
+                    url: 'http://localhost:3000/schedule/operation/data',
+                    method:'GET',
+                    dataType:'json',
+                    success: function(res) {
+
+                        let result = res;        
+                        
+                        for(let g = 0; g < parseInt(result['totalOperation']); g++) {
+
+                            var data = {
+                                date: result['taiwanDate'],
+                                doctorName: result['doctorName'][g],
+                                department: result['department'][g],
+                                patientName: result['patientName'][g],
+                                operationRoom: result['operationRoom'][g],
+                                bed: result['bed'][g],
+                                estimateTime: result['estimateTime'][g],
+                                anaYesNo: result['anaYesNo'][g],
+                                operationName: result['operationName'][g],
+                                chart: result['chart'][g],
+                                operationKind: result['operationKind'][g],
+                                time: result['time'][g],
+                                operationAgain: result['operationAgain'][g],
+                                estimateStartTime: result['estimateStartTime'][g],
+                                fastingDate: result['fastingDate'][g],
+                                fastingTime: result['fastingTime'][g],
+                                anaKind: result['anaKind'][g],
+                                diagnosisCode: result['diagnosisCode'][g],
+                                diagnosisName: result['diagnosisName'][g],
+                                operationCode: result['operationCode'][g]
+                            };
+
+                            id++;
+                            eventContainer.innerHTML = "";
+                            events = [];
+                            events.push(data);
+                            processEvents();
+
+                            }
+
+                            loadEvents();
+
+                            eventsByDay = {};
+                            id = 1;
+
+                    }, error:function(err) {console.log('error')}
+                });
+                t = 20;
+            };
+            document.getElementById('update').innerHTML= t;
+            console.log(t);
+            t -= 1;
+            setTimeout('showTime()',1000);
+    };
     
     
     </script>
