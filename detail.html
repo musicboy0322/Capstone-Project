@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="assets/detail.css">
 </head>
 <body>
-    <div class="container">
-        <button type="submit" class="btn" onclick="openPopup()">
+    <div class="container" id="blur">
+        <button class="btn" onclick="openPopup()">
             <div>
                 醫師:蔣小安<br>
                 病患:劉曉明<br>
@@ -93,18 +93,18 @@
                     </tr>
                 </table>
                 <br>
-                <button type="button" onclick="closePopup()">關閉</button>
+                <button  onclick="openPopup()">關閉</button>
         </div>
     </div>
 <script>
-    let popup = document.getElementById("popup");
-
+  
     function openPopup(){
-        popup.classList.add("open-popup")
+        var popup = document.getElementById("popup");
+        popup.classList.add("open-popup");
+        var blur = document.getElementById("blur")
+        blur.classList.add("blur")
     }
-    function closePopup(){
-        popup.classList.remove("open-popup")
-    }
+    
 </script>
 </body>
 </html>

@@ -101,6 +101,7 @@
                                 麻醉:<%= operationData['是否麻醉']%><br>
                                 手術:<br><%= operationData['手術名稱'] %>
                             </div>
+                            <br>
                             <form action="" method="post">
                                 <select name="situation" id="situation">
                                     <option selected>預約</option>
@@ -149,80 +150,80 @@
             </table>
             <div class="popup" id="popup">
                 <br><br>
-                <table border= 1 class="detail">
-                      <tr>
-                        <td>病人姓名</td>
-                        <td><%= patientName%></td>
-                        <td>病歷號</td>
-                        <td colspan="3"><%= operationData['病歷號']%></td>
-                      </tr>
-                      <tr>
-                        <td>主治醫師</td>
-                        <td><%= doctorName%></td>
-                        <td>科別</td>
+                <table class="detail">
+                    <tr>
+                    <td>病人姓名</td>
+                    <td><%= patientName%></td>
+                    <td>病歷號</td>
+                    <td colspan="3"><%= operationData['病歷號']%></td>
+                    </tr>
+                    <tr>
+                    <td>主治醫師</td>
+                    <td><%= doctorName%></td>
+                    <td>科別</td>
+                    <td><%= department%></td>
+                    <td>手術別</td>
+                    <td><%= operationData['手術別']%></td>
+                    </tr>
+                    <tr>
+                    <td>床號</td>
+                    <td><%= operationData['床號']%></td>
+                    <td>時段</td>
+                    <td><%= operationData['時段']%></td>
+                    <td>重返手術</td>
+                    <td><%= operationData['重返手術']%></td>
+                    </tr>
+                    <tr>
+                    <td>預計開始時間</td>
+                    <td><%= operationData['預估開始時間']%></td>
+                    <td>預計手術時間</td>
+                    <td><%= operationData['開刀預估時間']%>分鐘</td>
+                    <td>麻醉</td>
+                    <td><%= operationData['是否麻醉']%></td>
+                    </tr>
+                    <tr>
+                    <td>禁食日期</td>
+                    <td><%= operationData['禁食日期']%></td>
+                    <td>禁食時間</td>
+                    <td><%= operationData['禁食時間']%></td>
+                    <td>訪視註記</td>
+                    <td class="note1"></td>
+                    </tr>
+                    <tr>
+                    <td>麻醉類別</td>
+                    <td><%= operationData['麻醉類別']%></td>
+                    <td>訪視備註</td>
+                    <td colspan="3" class="note2"></td>
+                    </tr>
+                    <tr>
+                    <td>術前診斷</td>
+                    <td><%= operationData['術前診斷代碼']%></td>
+                    <td colspan="4"><%= operationData['術前診斷']%></td>
+                    </tr>
+                    <tr>
+                    <td>備註</td>
+                    <td colspan="5" class="note3"></td>
+                    </tr>
+                </table>
+                <br>
+                <table border= 1 class="surgery">
+                    <tr>
+                        <td>手術區分</td>
+                        <td>手術代碼</td>
+                        <td>手術名稱</td>
+                        <td>手術科別</td>
+                        <td colspan="2">主刀醫師</td>
+                    </tr>
+                    <tr>
+                        <td class="operation">主手術</td>
+                        <td><%= operationData['手術代碼']%></td>
+                        <td><%= operationData['手術名稱']%></td>
                         <td><%= department%></td>
-                        <td>手術別</td>
-                        <td><%= operationData['手術別']%></td>
-                      </tr>
-                      <tr>
-                        <td>床號</td>
-                        <td><%= operationData['床號']%></td>
-                        <td>時段</td>
-                        <td><%= operationData['時段']%></td>
-                        <td>重返手術</td>
-                        <td><%= operationData['重返手術']%></td>
-                      </tr>
-                      <tr>
-                        <td>預計開始時間</td>
-                        <td><%= operationData['預估開始時間']%></td>
-                        <td>預計手術時間</td>
-                        <td><%= operationData['開刀預估時間']%>分鐘</td>
-                        <td>麻醉</td>
-                        <td><%= operationData['是否麻醉']%></td>
-                      </tr>
-                      <tr>
-                        <td>禁食日期</td>
-                        <td><%= operationData['禁食日期']%></td>
-                        <td>禁食時間</td>
-                        <td><%= operationData['禁食時間']%></td>
-                        <td>訪視註記</td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <td>麻醉類別</td>
-                        <td><%= operationData['麻醉類別']%></td>
-                        <td>訪視備註</td>
-                        <td colspan="3"></td>
-                      </tr>
-                      <tr>
-                        <td>術前診斷</td>
-                        <td><%= operationData['術前診斷代碼']%></td>
-                        <td colspan="4"><%= operationData['術前診斷']%></td>
-                      </tr>
-                      <tr>
-                        <td>備註</td>
-                        <td colspan="5"></td>
-                      </tr>
-                    </table>
-                    <br>
-                    <table border= 1 class="surgery">
-                        <tr>
-                            <td>手術區分</td>
-                            <td>手術代碼</td>
-                            <td>手術名稱</td>
-                            <td>手術科別</td>
-                            <td colspan="2">主刀醫師</td>
-                        </tr>
-                        <tr>
-                            <td>主手術</td>
-                            <td><%= operationData['手術代碼']%></td>
-                            <td><%= operationData['手術名稱']%></td>
-                            <td><%= department%></td>
-                            <td colspan="2"><%= doctorName%></td>
-                        </tr>
-                    </table>
-                    <br>
-                    <button type="button" onclick="closePopup()">關閉</button>
+                        <td colspan="2"><%= doctorName%></td>
+                    </tr>
+                </table>
+                <br>
+                <button class='close' type="button" onclick="closePopup()">關閉</button>
             </div>
         </section>
     </main>

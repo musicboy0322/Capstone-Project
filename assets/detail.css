@@ -36,11 +36,13 @@
     color: #333;
     visibility: hidden;
     transition: transform 0.4s, top 0.4s;
+    opacity: 0;
 }
 .open-popup{
     visibility: visible;
     top: 50%;
     transform: translate(-50%,-50%) scale(1);
+    opacity: 1;
 }
 .popup button{
     width: 50%;
@@ -57,3 +59,8 @@
 .detail,.surgery{
     width: 640px;
 }
+.blur{
+    filter: blur(20px);
+    pointer-events: none;
+    user-select: none;
+  }

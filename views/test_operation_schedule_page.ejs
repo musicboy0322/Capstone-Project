@@ -7,18 +7,25 @@
     <link rel="stylesheet" href="../assets/test.css">
     <title>手術室排程系統</title>
 </head>
-<body>
+<body onload="get_time()">
     <header>
         <form action="" method="post">
             <label>查詢日期&ensp;<input type="date" id="date" name="date"></label>
             <input type = 'submit' value="提交">&ensp;
         </form>
+
+        <span>日期:</span>
+
         <span style= "background:rgb(255, 247, 0)">等待更新時間......
         </span>
+
+        
+
         &ensp;
         <span style= "background:rgb(106, 255, 0)">總人數：0 已開刀：0 常規刀尚有：0 急刀尚有：0</span>
-        <button type="button">手術平均時間</button>
-        <span style="float:right" class="user">使用者：<%= username %> </span> 
+        <span style="float:right" class="user">使用者：<%= username %> </span>
+        <button type="button" style="float:right" class="avtime">手術平均時間</button>&ensp;
+         
     </header>
     <main>
         <div class="calendar-container">
@@ -59,12 +66,31 @@
                     <li>23:00</li>
                 </ul>
             </div>
+            <div class="timeline">
+                <hr id="timeline" color="crimson">
+            </div>
         
             <div class="event-container">
-
+               
             </div>
 
         </div>
+        <script>
+            function place_hr(y_pos){
+                var d = document.getElementById('timeline');
+                d.style.position = "absolute";
+                d.style.top = y_pos+'px';
+            }
+        
+            function get_time(){
+                var date = new Date();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var y = 84.6+hours*120+minutes*2;
+                place_hr(y);
+                setTimeout("get_time()",1000);
+            }
+        </script>
     </main>
 </body>
 </html>

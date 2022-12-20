@@ -133,6 +133,7 @@ app.get("/schedule/operation",function(req,res){
                                     
                                     let data = splitData(operationData, totalOperation);
 
+
                                     res.render('test_has_operation_schedule', 
                                         {room: room, username: username, bed: data.bed, operationRoom: data.operationRoom,estimateTime: data.estimateTime,
                                         anaYesNo: data.anaYesNo, operationName: data.operationName, chart: data.chart, operationKind: data.operationKind,

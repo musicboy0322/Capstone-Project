@@ -1,3 +1,16 @@
+header {
+  margin: 20px 10px;
+
+}
+
+header form {
+  display: inline-block;
+}
+
+.avtime {
+  margin: 0px 10px 0px 10px;
+}
+
 li {
     list-style: none;
 }
@@ -19,18 +32,25 @@ ul {
 .operation-room {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  background: rgb(83, 83, 83);
+  background: rgb(80, 80, 80);
+  height: 30px;
   color: whitesmoke;
   text-align: center;
 }
 
+.operation-room li {
+  margin: 3px;
+}
+
 .header {
-  background: rgb(224, 189, 156);
   grid-area: header;
+  position: sticky;  /*固定位置*/
+  top: 0;
+  z-index: 5;
 }
 
 .timeslots-container {
-  background: lightblue;
+  background: rgba(186, 244, 178, 0.584);
   grid-area: timeslots-container;
   /*justify-items: left;*/
 }
@@ -42,15 +62,15 @@ ul {
 }
 
 .timeslots li {
-  min-height: 60px;
+  min-height: 120px;
 }
 
-.timeslots li::after {
+.timeslots li::before {
   content: "";
   position: absolute;
   left: 10px;
-  width: 100%;
-  height: 1px;
+  width: 48px;
+  height: 0.3px;
   background: #afafaf;
   z-index: 1;
 }
@@ -58,11 +78,12 @@ ul {
 .event-container {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(1440, 1fr);
-  background: rgb(222, 223, 231);
+  grid-template-rows: repeat(1440, 3fr);
   grid-area: main;
   position: relative;
   white-space: nowrap;
+  droppable: true;
+
   background: repeating-linear-gradient(
     to right,
     transparent 0px,
@@ -71,14 +92,26 @@ ul {
   ),repeating-linear-gradient(
     to bottom,
     transparent 0px,
-    transparent 29px,
-    black 30px
+    transparent 59.2px,
+    black 60px
   );
+  
 }
 
 .event-container > div {
-  border-right: 1px, soled, black;
+  border-right: 1px, solid, black;
   padding: 0 1em;
+}
+
+.timeline {
+  display: inline-block;
+}
+
+#timeline {
+  width: 1500px;
+  size: 1px;
+  z-index: 6;
+  position: relative;
 }
 
 .event-name {
@@ -91,14 +124,21 @@ ul {
   line-height: 15px;
 }
 
+button {
+  text-align: left;
+}
+
 .slot {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: normal;
   position: absolute;
   /* overflow: hidden; */
   background: rgb(66, 147, 223);
   border-radius: 5px;
   z-index: 2;
   margin-top: 1px;
-  border-color: rgb(3, 155, 229);
+  border-color: #afafaf;
   outline: none;
 }
 
@@ -149,4 +189,93 @@ ul {
   /* -webkit-flex: 1 1 auto; */
   /* flex: 1 1 auto; */
   height: 200%;
+}
+
+.popup {
+  width: 700px;
+  height: 480px;
+  border: 1px solid black;
+  background: #e5e5e5;
+  border-radius: 6px;
+  position: fixed;
+  left: 50%;
+  text-align: center;
+  padding: 0 30px 30px;
+  color: #333;
+  visibility: hidden;
+  transition: transform 0.4s, top 0.4s;
+  z-index: 8;
+}
+
+.open-popup{
+  visibility: visible;
+  top: 50%;
+  transform: translate(-50%,-50%) scale(1);
+}
+
+.blur {
+  backdrop-filter:blur(5px);
+}
+
+.popup button{
+  text-align: center;
+  width: 301px;
+  height: 44px;
+  margin-top: 50px;
+  padding: 10px 0;
+  background: #fff;
+  color: #000000;
+  border: 1;
+  outline: none;
+  font-size: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.detail {
+  width: 640px;
+  height: 219px;
+}
+
+.surgery {
+  width: 640px;
+  height: 58px;
+}
+
+.detail,.surgery {
+  margin-left: 29px;
+  width: 640px;
+}
+.detail td,tr {
+  border: 1px solid #000000;
+}
+
+.patientName, .chart, .operationKind, .bed, .time, .note1, .note2, .note3, .operationAgain, .estimateStartTime, .estimateTime, .anaYesNo, .fastingDate, .fastingTime, .anaKind, .diagnosisCode, .diagnosisName, .operation, .operationCode, .operationName, .department, .doctorName{
+  background: rgb(254, 253, 232);
+}
+
+#situation {
+  border: 1px solid black;
+  display: flex;
+  float: right;
+  margin-right: 30px;
+  width: 100px;
+  height: 30px;
+}
+
+.close {
+  display: flex;
+  justify-content: center; 
+}
+
+/*.brightness {
+  display: inline-block;
+  backdrop-filter: blur(50%);
+  width: 1519.2px;
+  height: 2982.6px;
+}*/
+.blur{
+  filter: blur(20px);
+  pointer-events: none;
+  user-select: none;
 }
