@@ -59,7 +59,7 @@ app.get("/schedule",function(req,res){
            //username
            connection.query(`select 名字 from 使用者帳號 where ID = ${global.ID}`, (err, result) => {
                 username = result[0]['名字'];
-                res.render('test_operation_schedule_page', {room: room, username: username});
+                res.render('operation_schedule_page', {room: room, username: username});
            });
         });
     });    
@@ -134,7 +134,7 @@ app.get("/schedule/operation",function(req,res){
                                     let data = splitData(operationData, totalOperation);
 
 
-                                    res.render('test_has_operation_schedule', 
+                                    res.render('has_operation_schedule_page', 
                                         {room: room, username: username, bed: data.bed, operationRoom: data.operationRoom,estimateTime: data.estimateTime,
                                         anaYesNo: data.anaYesNo, operationName: data.operationName, chart: data.chart, operationKind: data.operationKind,
                                         time: data.time, operationAgain: data. operationAgain, estimateStartTime: data.estimateStartTime, fastingDate: data.fastingDate,
