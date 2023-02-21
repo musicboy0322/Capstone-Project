@@ -1,34 +1,35 @@
 const mysql = require('mysql');
-const {period_change, operation_type_change, return_or_not_change, ana_kind_change} = require('./content_change');
 require('dotenv').config();
 
-const connect_main = mysql.createConnection({
-    host: process.env.DB_HOST_MAIN,
-    user: process.env.DB_USER_MAIN,
-    password: process.env.DB_PASSWORD_MAIN,
-    database: process.env.DB_DATABASE_MAIN,
-    port: process.env.DB_PORT_MAIN
+const connect_own = mysql.createConnection({
+    host: process.env.DB_HOST_OWN,
+    user: process.env.DB_USER_OWN,
+    password: process.env.DB_PASSWORD_OWN,
+    database: process.env.DB_DATABASE_oWN,
+    port: process.env.DB_PORT_OWN
 });
 
-const connect_other = mysql.createConnection({
-    host: process.env.DB_HOST_OTHER,
-    user: process.env.DB_USER_OTHER,
-    password: process.env.DB_PASSWORD_OTHER,
-    database: process.env.DB_DATABASE_OTHER,
-    port: process.env.DB_PORT_OTHER
+const connect_hospital = mysql.createConnection({
+    host: process.env.DB_HOST_HOSPITAL,
+    user: process.env.DB_USER_HOSPITAL,
+    password: process.env.DB_PASSWORD_HOSPITAL,
+    database: process.env.DB_DATABASE_HOSPITAL,
+    port: process.env.DB_PORT_HOSPITAL
 })
 
-connect_main.connect(err => {
+connect_own.connect(err => {
     if(err){
         console.log(err);
     } 
 });   
 
-connect_other.connect(err => {
+connect_hospital.connect(err => {
     if(err){
         console.log(err);
     } 
 });   
+
+module.exports = {connect_own, connect_hospital};
 
 /*
 let number = '1111101';
@@ -78,5 +79,4 @@ const data = connect_other.query(sql, (err, result) => {
 });
 */
 
-module.exports = connect_main;
 

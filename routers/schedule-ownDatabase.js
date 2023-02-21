@@ -8,19 +8,19 @@ router.get("/",function(req,res){
     var room = [];
 
     // len
-    connect.connect_hospital.query('select count(OR_ROOM_NO_2) from PTOR where OR_ROOM_NO_2 != ""', (err, result) => {
+    connect.connect_own.query('select count(房號) from 手術資料 where 房號 != ""', (err, result) => {
 
-        let len = result[0]['count(OR_ROOM_NO_2)'];
+        let len = result[0]['count(房號)'];
         
         //room
-        connect.connect_hospital.query(`select OR_ROOM_NO_2 from PTOR where OR_ROOM_NO_2 != '' order by OR_ROOM_NO_2`, (err, result) => {
+        connect.connect_own.query(`select 房號 from 手術資料 where 房號 != '' order by 房號`, (err, result) => {
             if(err) {
                 console.log(err);
             } else {
                 for(let i =0; i < len; i++) {
-                    roomNumber = room.includes(result[i]['OR_ROOM_NO_2']);
+                    roomNumber = room.includes(result[i]['房號']);
                     if(roomNumber == false) {
-                        room.push(result[i]['OR_ROOM_NO_2']);
+                        room.push(result[i]['房號']);
                     }
                 }
             };
@@ -37,8 +37,7 @@ router.get("/",function(req,res){
 });
 
 router.post("/",encoder,function(req,res){
-    global.date;
-    date = req.body.date;
+    let date = req.body.date;
     let dateSplit = date.split('-');
     taiwanYear = parseInt(dateSplit[0])-1911;
     global.taiwanDate;

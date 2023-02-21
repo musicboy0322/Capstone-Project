@@ -1,56 +1,101 @@
-const period_change = array => {
-    if(array[6] == '1') {
-        array[6] == '早上';
-        return array;
-    } else if (array[6] == '2') {
-        array[6] == '下午';
-        return array;
-    } else {
-        array[6] == '晚上';
-        return array;
+const { json } = require("body-parser");
+
+const or_apn_change = array => {
+    for(let j = 0; j < array.length; j++) {
+        if(array[j] == '1') {
+            array[j] = '早上';
+        } else if (array[j] == '2') {
+            array[j] = '下午';
+        } else {
+            array[j] = '晚上';
+        }
     }
+    return array;
 };
 
-const operation_type_change = array => {
-    if(array[8] == '1') {
-        array[8] == '緊急手術';
-    } else if (array[8] == '2') {
-        array[8] == '預約手術';
-    } else if (array[8] == '3') {
-        array[8] == '當日手術';
-    } else {
-        array[8] == '危急手術';
+const or_type_2_change = array => {
+    for(let j = 0; j < array.length; j++) {
+        if(array[j] == '1') {
+            array[j] = '緊急手術';
+        } else if (array[j] == '2') {
+            array[j] = '預約手術';
+        } else if (array[j] == '3') {
+            array[j] = '當日手術';
+        } else {
+            array[j] = '危急手術';
+        }
     }
+    return array;
 };
 
-const return_or_not_change = array => {
-    if(array[9] == 'N') {
-        array[9] == '否';
-    } else {
-        array[9] == '是';
+const return_flag_change = array => {
+    for(let j = 0; j < array.length; j++) {
+        if(array[j] == 'N') {
+            array[j] = '否';
+        } else {
+            array[j] = '是';
+        }
     }
+    return array;
 };
 
-const ana_kind_change = array => {
-    if(array[10] == '0') {
-        array[10] == 'LA';
-    } else if (array[10] == '1') {
-        array[10] == 'GA';
-    } else if (array[10] == '2') {
-        array[10] == 'GA+EA';
-    } else if (array[10] == '3'){
-        array[10] == 'IVG';
-    } else if (array[10] == '4') {
-        array[10] == 'SA';
-    } else if (array[10] == '5') {
-        array[10] == 'EA';
-    } else if (array[10] == '6'){
-        array[10] == 'Reg.Block';
-    } else {
-        array[10] == 'DLGA+EA+ICU'
+const an_class_2_change = array => {
+    for(let j = 0; j < array.length; j++) {
+        if(array[j] == '0') {
+            array[j] = 'LA';
+        } else if (array[j] == '1') {
+            array[j] = 'GA';
+        } else if (array[j] == '2') {
+            array[j] = 'GA+EA';
+        } else if (array[j] == '3'){
+            array[j] = 'IVG';
+        } else if (array[j] == '4') {
+            array[j] = 'SA';
+        } else if (array[j] == '5') {
+            array[j] = 'EA';
+        } else if (array[j] == '6'){
+            array[j] = 'Reg.Block';
+        } else {
+            array[j] = 'DLGA+EA+ICU'
+        }
     }
+    return array
 };
 
+const time_change = array => {
+    for(let j = 0; j < array.length; j++) {
+        if(array[j].length == 3) {
+            array[j] = '0' + array[j];
+            split = array[j].split('');
+            array[j] = split[0] + split[1] + ':' + split[2] + split[3];
+        } else if(array[j].length == 2) {
+            array[j] = '00' + array[j];
+            split = array[j].split('');
+            array[j] = split[0] + split[1] + ':' + split[2] + split[3];
+        } else if(array[j].length == 1) {
+            array[j] = '000' + array[j];
+            split = array[j].split('');
+            array[j] = split[0] + split[1] + ':' + split[2] + split[3];
+        }
+        else {
+            split = array[j].split('');
+            array[j] = split[0] + split[1] + ':' + split[2] + split[3];
+        }
+    }
+    return array;
+}
+
+const date_change = array => {
+    for(let j = 0; j < array.length; j++) {
+        split = array[j].split('');
+        array[j] = split[0] + split[1] + split[2] + '/' + split[3] + split[4] + '/' + split[5] + split[6];
+    }
+    return array;
+}
+
+module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change};
+
+/*
 const splitData = (operationData , totalOperation) => {
     bed = []
     operationRoom = []
@@ -138,5 +183,4 @@ const splitData = (operationData , totalOperation) => {
             fastingTime: fastingTime, anaKind: anaKind, diagnosisCode: diagnosisCode, diagnosisName: diagnosisName, operationCode: operationCode
             }
 }
-
-module.exports = splitData;
+*/

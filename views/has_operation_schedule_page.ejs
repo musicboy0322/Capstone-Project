@@ -187,26 +187,26 @@
         $('.taiwanDate').text = `日期:${dateArrange}`;
         */
 
-        let doctorName = '<%= doctorName %>'.split(',');
-        let department = '<%= department %>'.split(',');
-        let patientName = '<%= patientName %>'.split(',');
-        let operationRoom = '<%= operationRoom %>'.split(',');
-        let bed = '<%= bed %>'.split(',');
-        let estimateTime =  '<%= estimateTime %>'.split(',');
-        let anaYesNo = '<%= anaYesNo %>'.split(',');
-        let operationName = '<%= operationName %>'.split(',');
-        let chart = '<%= chart %>'.split(',');
-        let operationKind = '<%= operationKind %>'.split(',');
-        let time = '<%= time %>'.split(',');
-        let operationAgain = '<%= operationAgain %>'.split(',');
-        let estimateStartTime = '<%= estimateStartTime %>'.split(',');
-        let fastingDate = '<%= fastingDate %>'.split(',');
-        let fastingTime = '<%= fastingTime %>'.split(',');
-        let anaKind = '<%= anaKind %>'.split(',');
-        let diagnosisCode = '<%= diagnosisCode %>'.split(',');
-        let diagnosisName = '<%= diagnosisName %>'.split(',');
-        let operationCode = '<%= operationCode %>'.split(',');
-
+        let chart = '<%= chart_no %>'.split(',');
+        let operationCode = '<%= or_code %>'.split(',');
+        let operationName = '<%= or_name %>'.split(',');
+        let operationRoom = '<%= or_room_no_2 %>'.split(',');
+        let bed = '<%= bed_no %>'.split(',');
+        let time = '<%= or_apn %>'.split(',');
+        let estimateStartTime = '<%= expect_or_start_time %>'.split(',');
+        let estimateTime =  '<%= duration %>'.split(',');
+        let operationKind = '<%= or_type_2 %>'.split(',');
+        let operationAgain = '<%= return_flag %>'.split(',');
+        let anaKind = '<%= an_class_2 %>'.split(',');
+        let fastingDate = '<%= npo_date %>'.split(',');
+        let fastingTime = '<%= npo_time %>'.split(',')
+        let diagnosisCode = '<%= diagnosis_code %>'.split(',');
+        let diagnosisName = '<%= diagnosis_english_name %>'.split(',');
+        let doctorName = '<%= doctor_name %>'.split(',');
+        let department = '<%= department_name %>'.split(',');
+        let patientName = '<%= patient_name %>'.split(',');
+        let anaYesNo = '<%= ana_yes_no %>'.split(',');
+        
         inputRoom();
 
         //時間到要更新手術資料的部分
@@ -457,25 +457,25 @@
 
                             var data = {
                                 date: result['taiwanDate'],
-                                doctorName: result['doctorName'][g],
-                                department: result['department'][g],
-                                patientName: result['patientName'][g],
-                                operationRoom: result['operationRoom'][g],
-                                bed: result['bed'][g],
-                                estimateTime: result['estimateTime'][g],
+                                chart: result['chart_no'][g],
+                                operationCode: result['or_code'][g],
+                                operationName: result['or_name'][g],
+                                operationRoom: result['or_room_no_2'][g],
+                                bed: result['bed_no'][g],
+                                time: result['or_apn'][g],
+                                estimateStartTime: result['expect_or_start_time'][g],
+                                estimateTime: result['duration'][g],
+                                operationKind: result['or_type_2'][g],
+                                operationAgain: result['return_flag'][g],
+                                naKind: result['an_class_2'][g],
+                                fastingDate: result['npo_date'][g],
+                                fastingTime: result['npo_time'][g],
+                                diagnosisCode: result['diagnosis_code'][g],
+                                diagnosisName: result['diagnosis_english_name'][g],
+                                doctorName: result['doctor_name'][g],
+                                department: result['department_name'][g],
+                                patientName: result['patient_name'][g],
                                 anaYesNo: result['anaYesNo'][g],
-                                operationName: result['operationName'][g],
-                                chart: result['chart'][g],
-                                operationKind: result['operationKind'][g],
-                                time: result['time'][g],
-                                operationAgain: result['operationAgain'][g],
-                                estimateStartTime: result['estimateStartTime'][g],
-                                fastingDate: result['fastingDate'][g],
-                                fastingTime: result['fastingTime'][g],
-                                anaKind: result['anaKind'][g],
-                                diagnosisCode: result['diagnosisCode'][g],
-                                diagnosisName: result['diagnosisName'][g],
-                                operationCode: result['operationCode'][g]
                             };
 
                             id++;
