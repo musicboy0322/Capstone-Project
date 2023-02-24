@@ -131,9 +131,9 @@ router.get("/",function(req,res){
         }
 
         for(let k = 0; k < totalOperation; k++) {
-            if(or_type_2[k] == '1') {
+            if(or_type_2[k] == '緊急手術') {
                 urgentOperation += 1;
-            } else if(or_type_2[k] == '2') {
+            } else if(or_type_2[k] == '預約手術') {
                 reserveOperation += 1;
             }
         }

@@ -39,7 +39,6 @@ router.get("/",function(req,res){
     var or_code = [];
     var or_name = [];
     var or_div_no = [];
-    var or_doctor_no = [];
 
     //own database
     var patient_name = [];
@@ -62,7 +61,7 @@ router.get("/",function(req,res){
                     }
                 }
             };
-           room.pop(); 
+        room.pop(); 
 
             //operation data
             connection.connect_hospital.query(`select ${needDataPtor} from PTOR where OR_DATE = ${global.taiwanDate} and OR_ROOM_NO_2 != '' and OR_ROOM_NO_2 != 'DR' and OR_DUPLICATE_NO != '1' and EXPECT_OR_START_TIME != '0'`, (err, result) => {
@@ -153,11 +152,12 @@ router.get("/",function(req,res){
                 }
 
                 for(let k = 0; k < totalOperation; k++) {
-                    if(or_type_2[k] == '1') {
+                    if(new_or_type_2[k] == '緊急手術') {
                         urgentOperation += 1;
-                    } else if(or_type_2[k] == '2') {
+                    } else if(new_or_type_2[k] == '預約手術') {
                         reserveOperation += 1;
                     }
+
                 }
 
                 for(let j = 0; j < totalOperation; j++) {
