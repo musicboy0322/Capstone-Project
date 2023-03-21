@@ -1,5 +1,4 @@
-const { json } = require("body-parser");
-
+//for hospital database's data
 const or_apn_change = array => {
     for(let j = 0; j < array.length; j++) {
         if(array[j] == '1') {
@@ -93,9 +92,7 @@ const date_change = array => {
     return array;
 }
 
-module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change};
-
-/*
+//for own database's data
 const splitData = (operationData , totalOperation) => {
     bed = []
     operationRoom = []
@@ -183,4 +180,5 @@ const splitData = (operationData , totalOperation) => {
             fastingTime: fastingTime, anaKind: anaKind, diagnosisCode: diagnosisCode, diagnosisName: diagnosisName, operationCode: operationCode
             }
 }
-*/
+
+module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change, splitData};

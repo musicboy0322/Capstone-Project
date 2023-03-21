@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../assets/main.css"> 
     <title>手術室排程系統</title>
 </head>
-<body onload="get_time()">
+<body>
     <header>
         <form action="" method="post">
             <label>查詢日期&ensp;<input type="date" id="date" name="date"></label>
@@ -131,7 +131,7 @@
                 </tr>
             </table>
             <br>
-            <table border= 1 class="surgery">
+            <table border = 1 class="surgery">
                 <tr>
                     <td>手術區分</td>
                     <td>手術代碼</td>
@@ -164,389 +164,496 @@
 
     </div>
 
-    <script src="https://code.jquery.com/jquery-latest.js"></script>
-
-    <script>
-        //匯入手術資料的部分
-        var events = [];
-        const colors = [
-        "white"
-        ];
-        var businessStartHours = 0;
-        var timeslotInterval = 1;
-        const daysInaWeek = 12;
-        var eventContainer = document.getElementsByClassName("event-container")[0];
-        var sections = daysInaWeek;
-        var eventsByDay = {};
-        var id = 0;
-
-        /*
-        let taiwanDate = '<%= taiwanDate %>'.split('');
-        let dateArrange = taiwanDate[0] + taiwanDate[1] + taiwanDate[2] + '/' + taiwanDate[3] + taiwanDate[4] + '/' + taiwanDate[5] + taiwanDate[6];
-        console.log(dateArrange);
-        $('.taiwanDate').text = `日期:${dateArrange}`;
-        */
-
-        let chart = '<%= chart_no %>'.split(',');
-        let operationCode = '<%= or_code %>'.split(',');
-        let operationName = '<%= or_name %>'.split(',');
-        let operationRoom = '<%= or_room_no_2 %>'.split(',');
-        let bed = '<%= bed_no %>'.split(',');
-        let time = '<%= or_apn %>'.split(',');
-        let estimateStartTime = '<%= expect_or_start_time %>'.split(',');
-        let estimateTime =  '<%= duration %>'.split(',');
-        let operationKind = '<%= or_type_2 %>'.split(',');
-        let operationAgain = '<%= return_flag %>'.split(',');
-        let anaKind = '<%= an_class_2 %>'.split(',');
-        let fastingDate = '<%= npo_date %>'.split(',');
-        let fastingTime = '<%= npo_time %>'.split(',')
-        let diagnosisCode = '<%= diagnosis_code %>'.split(',');
-        let diagnosisName = '<%= diagnosis_english_name %>'.split(',');
-        let doctorName = '<%= doctor_name %>'.split(',');
-        let department = '<%= department_name %>'.split(',');
-        let patientName = '<%= patient_name %>'.split(',');
-        let anaYesNo = '<%= ana_yes_no %>'.split(',');
-        
-        inputRoom();
-
-        //時間到要更新手術資料的部分
-        var t = 20;
-        showTime();
-
-        //移動手術房的部分
-        addLattice();
-
-        //顯示詳細資料的部分
-        let popup = document.getElementById("popup");
-        let blur = document.getElementById("blur");
-
-        let moveRoom = document.querySelectorAll('.slot');
-        moveRoom.forEach(moveRoom => {
-            moveRoom.addEventListener('dragstart', (e) => {
-                console.log("hi");
-            });
-        });
-
-        let place = document.querySelectorAll('.place');
-        place.forEach(place => {
-            place.addEventListener('dragenter', (e) => {
-                console.log('Fuck');
-            })
-        });
-
-        function addLattice() {
-            for(let b = 0; b < 12; b++) {
-                for(let a = 0; a < 48; a++) {
-                let row = a * 60;
-                let place = document.createElement('div');
-                place.setAttribute('class', 'place' );
-                place.setAttribute('droppable', 'true');
-
-                place.style.width = 121.1 + 'px';
-                place.style.height = 60 + 'px';
-                place.style.gridRowStart = row;
-                place.style.gridColumnStart = b; 
-                place.style.zindex = 3;
-
-                //eventContainer.appendChild(place);
-                }
-            }
-            
-        }
-
-        //各式各樣的函式
-        function inputRoom() {
-            for(let g = 0; g < parseInt('<%= totalOperation %>'); g++) {
-                var data = {
-                    id: id,
-                    date: '<%= taiwanDate %>',
-                    doctorName: doctorName[g],
-                    department: department[g],
-                    patientName: patientName[g],
-                    operationRoom: operationRoom[g],
-                    bed: bed[g],
-                    estimateTime: estimateTime[g],
-                    anaYesNo: anaYesNo[g],
-                    operationName: operationName[g],
-                    chart: chart[g],
-                    operationKind: operationKind[g],
-                    time: time[g],
-                    operationAgain: operationAgain[g],
-                    estimateStartTime: estimateStartTime[g],
-                    fastingDate: fastingDate[g],
-                    fastingTime: fastingTime[g],
-                    anaKind: anaKind[g],
-                    diagnosisCode: diagnosisCode[g],
-                    diagnosisName: diagnosisName[g],
-                    operationCode: operationCode[g]
-                };
-                
-
-                id++;
-                eventContainer.innerHTML = "";
-                events = [];
-                events.push(data);
-                processEvents();
-            }
-            
-            loadEvents();
-
-            eventsByDay = {};
-            id = 0;
-        };
     
-    
-    function processEvents() {
-        events.forEach(data => {
-            const cell = getCell(data.estimateStartTime);
-    
-            if (!eventsByDay[data.date]) {
-            eventsByDay[data.date] = {};
-            eventsByDay[data.date][cell] = [];
-            }
-    
-            if (!eventsByDay[data.date][cell]) {
-            eventsByDay[data.date][cell] = [];
-            }
-    
-            eventsByDay[data.date][cell].push(data);
-        });
-    }
-    
-    function getCell(starttime) {
-        const h = +starttime.split(":")[0];
-        return h - businessStartHours;
-    }
-    
-    function loadEvents() {
-        Object.keys(eventsByDay).forEach(e => {
-            const eventsForThisDay = eventsByDay[e];
-            Object.keys(eventsForThisDay).forEach(c => {
-            const events = eventsForThisDay[c];
-            //events.sort(sortcomparer);
-            var totalEventsPerCell = events.length;
-            var offset = 0;
-    
-            for (var i = 0; i < events.length; i++) {
-                var event = events[i];
-
-                const colPos = getColumnPosition(event.operationRoom);
-
-                const perc = 100 / (sections + 1 - colPos);
-                
-                const percW = Math.floor(perc / totalEventsPerCell);
-
-                var wMultiplier = 1.5;
-                if (offset === totalEventsPerCell - 1) {
-                wMultiplier = 0.95;
-                }
-    
-                event["width"] = percW * wMultiplier;
-                event["left"] = percW * offset;
-                renderEvent(event);
-                
-                ++offset;
-            }
-            });
-        });
-    }
-    
-    function renderEvent(evt) {
-        var oneEvent = document.createElement("button");
-        var eventDoctor = document.createElement("div");
-        var eventPatient = document.createElement("div");
-        var eventBed = document.createElement("div");
-        var eventEstimateTime = document.createElement("div");
-        var eventAna = document.createElement("div");
-        var eventOperationName = document.createElement("div");
-        const color = Math.floor(Math.random() * colors.length);
-
-        //加內容的地方
-        oneEvent.appendChild(eventDoctor);
-        oneEvent.appendChild(eventPatient);
-        oneEvent.appendChild(eventBed);
-        oneEvent.appendChild(eventEstimateTime);
-        oneEvent.appendChild(eventAna);
-        oneEvent.appendChild(eventOperationName);
-        
-        eventDoctor.innerHTML = `醫生: ${evt.doctorName}`;
-        eventPatient.innerHTML = `病患: ${evt.patientName}`;
-        eventBed.innerHTML = `床號: ${evt.bed}`;
-        eventEstimateTime.innerHTML = `時間: ${evt.estimateTime}`;
-        eventAna.innerHTML = `麻醉: ${evt.anaYesNo}`;
-        eventOperationName.innerHTML = `手術: ${evt.operationName}`;
-        
-        
-        eventDoctor.setAttribute("class", "event-docotr");
-        eventPatient.setAttribute("class", "event-patient");
-        eventBed.setAttribute("class", "event-bed");
-        eventEstimateTime.setAttribute("class", "event-estimateTime");
-        eventAna.setAttribute("class", "ana");
-        eventOperationName.setAttribute("class", "event-operationName");
-        
-        /*
-        $('.eventDoctor').text(`醫生: ${evt.doctorName}`);
-        $('.eventPatient').text(`病患: ${evt.patientName}`);
-        $('.eventBed').text(`床號: ${evt.bed}`);
-        $('.eventEstimateTime').text(`時間: ${evt.estimateTime}`);
-        $('.anaYesNo').text(`麻醉: ${evt.anaYesNo}`);
-        $('.eventOperationName').text(`手術: ${evt.operationName}`);
-        */
-
-        oneEvent.setAttribute("class", "slot");
-        oneEvent.setAttribute("draggable", "true");
-        oneEvent.setAttribute("onclick", `openPopup(${evt.id})`);
-        
-        //加內容的地方
-        
-        //產生格子的樣式
-        /*
-        eventDoctor.style.overflow = hidden;
-        eventPatient.style.overflow = hidden;
-        eventBed.style.overflow = hidden;
-        eventEstimateTime.style.overflow = hidden;
-        eventAna.style.overflow = hidden;
-        eventOperationName.style.overflow = hidden;
-        */
-
-        oneEvent.style.background = colors[color];
-        oneEvent.style.width = "95px";
-        oneEvent.style.left = "0%";
-        //oneEvent.style.width = evt.width + "%";
-        //oneEvent.style.left = evt.left + "%";
-        oneEvent.style.zIndex = evt.zindex;
-        oneEvent.style.height = (parseInt(evt.estimateTime)*2) + "px";
-    
-        oneEvent.style.gridColumnStart = getColumnPosition(evt.operationRoom);
-        oneEvent.style.gridRowStart = getRowPosition(evt.estimateStartTime);
-
-        eventContainer.appendChild(oneEvent);
-    }
-
-    function getColumnPosition(roomNumber) {
-        let number = 1;
-        let room = '<%= room %>'.split(',');
-        for(let i = 0; i < room.length; i++) {
-            if(room[i] == roomNumber) {
-                return number;
-            } else {
-                number += 1;
-            }
-        };
-    };
-    
-    function getRowPosition(startTime) {
-        const h = parseInt(startTime.split(":")[0]);
-        const m = parseInt(startTime.split(":")[1]);
-        const totalMinutes = (Math.abs(businessStartHours - h)) * 60 + m;
-        const rowPos = totalMinutes / timeslotInterval;
-        return rowPos;
-    }
-    
-    function showTime(){
-            if(t==0){
-                $.ajax({
-                    url: 'http://localhost:3000/schedule/operation/data',
-                    method:'GET',
-                    dataType:'json',
-                    success: function(res) {
-
-                        let result = res;        
-                        
-                        for(let g = 0; g < parseInt(result['totalOperation']); g++) {
-
-                            var data = {
-                                date: result['taiwanDate'],
-                                chart: result['chart_no'][g],
-                                operationCode: result['or_code'][g],
-                                operationName: result['or_name'][g],
-                                operationRoom: result['or_room_no_2'][g],
-                                bed: result['bed_no'][g],
-                                time: result['or_apn'][g],
-                                estimateStartTime: result['expect_or_start_time'][g],
-                                estimateTime: result['duration'][g],
-                                operationKind: result['or_type_2'][g],
-                                operationAgain: result['return_flag'][g],
-                                naKind: result['an_class_2'][g],
-                                fastingDate: result['npo_date'][g],
-                                fastingTime: result['npo_time'][g],
-                                diagnosisCode: result['diagnosis_code'][g],
-                                diagnosisName: result['diagnosis_english_name'][g],
-                                doctorName: result['doctor_name'][g],
-                                department: result['department_name'][g],
-                                patientName: result['patient_name'][g],
-                                anaYesNo: result['anaYesNo'][g]
-                            };
-
-                            id++;
-                            eventContainer.innerHTML = "";
-                            events = [];
-                            events.push(data);
-                            processEvents();
-
-                            }
-
-                            loadEvents();
-
-                            eventsByDay = {};
-                            id = 1;
-
-                    }, error:function(err) {console.log('error')}
-                });
-                t = 60;
-            };
-            document.getElementById('update').innerHTML= t;
-            t -= 1;
-            setTimeout('showTime()',1000);
-    };
-
-    function place_hr(y_pos){
-        var d = document.getElementById('timeline');
-        d.style.position = "absolute";
-        d.style.top = y_pos+'px';
-    }
-
-    function get_time(){
-        var date = new Date();
-        var hours = date.getHours();
-        var minutes = date.getMinutes();
-        var y = 84.6+hours*120+minutes*2;
-        place_hr(y);
-        setTimeout("get_time()",1000);
-    }
-
-    function openPopup(id){
-        $('.bed').text(bed[id]);
-        $('.estimateTime').text(estimateTime[id]);
-        $('.anaYesNo').text(anaYesNo[id]);
-        $('.operationName').text(operationName[id]);
-        $('.chart').text(chart[id]);
-        $('.operationKind').text(operationKind[id]);
-        $('.time').text(time[id]);
-        $('.operationAgain').text(operationAgain[id]);
-        $('.estimateStartTime').text(estimateStartTime[id]);
-        $('.fastingDate').text(fastingDate[id]);
-        $('.fastingTime').text(fastingTime[id]);
-        $('.anaKind').text(anaKind[id]);
-        $('.diagnosisCode').text(diagnosisCode[id]);
-        $('.diagnosisName').text(diagnosisName[id]);
-        $('.operationName').text(operationName[id]);
-        $('.operationCode').text(operationCode[id]);
-        $('.department').text(department[id]);
-        $('.doctorName').text(doctorName[id]);
-        $('.patientName').text(patientName[id]);
-
-        popup.classList.add("open-popup");
-        
-    }
-
-    function closePopup(){
-        popup.classList.remove("open-popup");
-    
-    }
-    
-    </script>
 </main>
     
 </body>
 </html>
+
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+
+<script>
+    //匯入手術資料的部分
+    var events = [];
+    const colors = [
+    "white"
+    ];
+    var businessStartHours = 0;
+    var timeslotInterval = 1;
+    const daysInaWeek = 12;
+    var eventContainer = document.getElementsByClassName("event-container")[0];
+    var sections = daysInaWeek;
+    var eventsByDay = {};
+    var id = 0;
+
+    let chart = '<%= chart_no %>'.split(',');
+    let operationCode = '<%= or_code %>'.split(',');
+    let operationName = '<%= or_name %>'.split(',');
+    let operationRoom = '<%= or_room_no_2 %>'.split(',');
+    let bed = '<%= bed_no %>'.split(',');
+    let time = '<%= or_apn %>'.split(',');
+    let estimateStartTime = '<%= expect_or_start_time %>'.split(',');
+    let estimateTime =  '<%= duration %>'.split(',');
+    let operationKind = '<%= or_type_2 %>'.split(',');
+    let operationAgain = '<%= return_flag %>'.split(',');
+    let anaKind = '<%= an_class_2 %>'.split(',');
+    let fastingDate = '<%= npo_date %>'.split(',');
+    let fastingTime = '<%= npo_time %>'.split(',')
+    let diagnosisCode = '<%= diagnosis_code %>'.split(',');
+    let diagnosisName = '<%= diagnosis_english_name %>'.split(',');
+    let doctorName = '<%= doctor_name %>'.split(',');
+    let department = '<%= department_name %>'.split(',');
+    let patientName = '<%= patient_name %>'.split(',');
+    let anaYesNo = '<%= ana_yes_no %>'.split(',');
+    let realStartTime = '<%= or_in_time %>'.split(',');
+    let realEndTime = '<%= or_out_time %>'.split(',');
+    
+    inputRoom();
+
+    //時間到要更新手術資料的部分
+    var t = 20;
+    showTime();
+
+    //移動手術房的部分
+    addLattice();
+
+    //顯示詳細資料的部分
+    let popup = document.getElementById("popup");
+    let blur = document.getElementById("blur");
+
+    let moveRoom = document.querySelectorAll('.slot');
+    moveRoom.forEach(moveRoom => {
+        moveRoom.addEventListener('dragstart', (e) => {
+            console.log("hi");
+        });
+    });
+
+    let place = document.querySelectorAll('.place');
+    place.forEach(place => {
+        place.addEventListener('dragenter', (e) => {
+            console.log('Fuck');
+        })
+    });
+
+    //為了要讓進行中的顏色只進行一次的新增規則而設置，會使用到的地方位在color_situation()
+    //let frequency = 0;
+    
+    //下面 block_need_data 和 color_situation 所會需要的資料
+    let operationBlock = document.getElementsByClassName('slot');
+    let information = blockNeedData(operationBlock);
+
+    //顯示時間軸
+    get_time();
+
+    function addLattice() {
+        for(let b = 0; b < 12; b++) {
+            for(let a = 0; a < 48; a++) {
+            let row = a * 60;
+            let place = document.createElement('div');
+            place.setAttribute('class', 'place' );
+            place.setAttribute('droppable', 'true');
+
+            place.style.width = 121.1 + 'px';
+            place.style.height = 60 + 'px';
+            place.style.gridRowStart = row;
+            place.style.gridColumnStart = b; 
+            place.style.zindex = 3;
+
+            }
+        }
+        
+    }
+
+    //各式各樣的函式
+    function inputRoom() {
+        for(let g = 0; g < parseInt('<%= totalOperation %>'); g++) {
+
+            var data = {
+                id: id,
+                date: '<%= taiwanDate %>',
+                doctorName: doctorName[g],
+                department: department[g],
+                patientName: patientName[g],
+                operationRoom: operationRoom[g],
+                bed: bed[g],
+                estimateTime: estimateTime[g],
+                anaYesNo: anaYesNo[g],
+                operationName: operationName[g],
+                chart: chart[g],
+                operationKind: operationKind[g],
+                time: time[g],
+                operationAgain: operationAgain[g],
+                estimateStartTime: estimateStartTime[g],
+                fastingDate: fastingDate[g],
+                fastingTime: fastingTime[g],
+                anaKind: anaKind[g],
+                diagnosisCode: diagnosisCode[g],
+                diagnosisName: diagnosisName[g],
+                operationCode: operationCode[g]
+            };
+
+
+            id++;
+            eventContainer.innerHTML = "";
+            events = [];
+            events.push(data);
+            processEvents();
+        }
+        
+        loadEvents();
+
+        eventsByDay = {};
+        id = 0;
+    };
+
+
+function processEvents() {
+    events.forEach(data => {
+        const cell = getCell(data.estimateStartTime);
+
+        if (!eventsByDay[data.date]) {
+        eventsByDay[data.date] = {};
+        eventsByDay[data.date][cell] = [];
+        }
+
+        if (!eventsByDay[data.date][cell]) {
+        eventsByDay[data.date][cell] = [];
+        }
+
+        eventsByDay[data.date][cell].push(data);
+    });
+}
+
+function getCell(starttime) {
+    const h = +starttime.split(":")[0];
+    return h - businessStartHours;
+}
+
+function loadEvents() {
+    Object.keys(eventsByDay).forEach(e => {
+        const eventsForThisDay = eventsByDay[e];
+        Object.keys(eventsForThisDay).forEach(c => {
+        const events = eventsForThisDay[c];
+        //events.sort(sortcomparer);
+        var totalEventsPerCell = events.length;
+        var offset = 0;
+
+        for (var i = 0; i < events.length; i++) {
+            var event = events[i];
+
+            const colPos = getColumnPosition(event.operationRoom);
+
+            const perc = 100 / (sections + 1 - colPos);
+            
+            const percW = Math.floor(perc / totalEventsPerCell);
+
+            var wMultiplier = 1.5;
+            if (offset === totalEventsPerCell - 1) {
+            wMultiplier = 0.95;
+            }
+
+            event["width"] = percW * wMultiplier;
+            event["left"] = percW * offset;
+            renderEvent(event);
+            
+            ++offset;
+        }
+        });
+    });
+}
+
+function renderEvent(evt) {
+    //手術資料最外面那一層
+    var oneEvent = document.createElement("button");
+    //手術資料中間層，用來改變顏色用
+    var eventColor = document.createElement("div");
+    //手術資料最內層，用來放置手術資料
+    var eventDoctor = document.createElement("div");
+    var eventPatient = document.createElement("div");
+    var eventBed = document.createElement("div");
+    var eventEstimateTime = document.createElement("div");
+    var eventAna = document.createElement("div");
+    var eventOperationName = document.createElement("div");
+    const color = Math.floor(Math.random() * colors.length);
+
+    //放置子元素(最內層加入中間層)
+    eventColor.appendChild(eventDoctor);
+    eventColor.appendChild(eventPatient);
+    eventColor.appendChild(eventBed);
+    eventColor.appendChild(eventEstimateTime);
+    eventColor.appendChild(eventAna);
+    eventColor.appendChild(eventOperationName);
+
+    //放置子元素(中間層加入最外層)
+    oneEvent.appendChild(eventColor);
+    
+    //設定各項內容
+    //最內層各項資料
+    eventDoctor.innerHTML = `醫生: ${evt.doctorName}`;
+    eventPatient.innerHTML = `病患: ${evt.patientName}`;
+    eventBed.innerHTML = `床號: ${evt.bed}`;
+    eventEstimateTime.innerHTML = `時間: ${evt.estimateTime}`;
+    eventAna.innerHTML = `麻醉: ${evt.anaYesNo}`;
+    eventOperationName.innerHTML = `手術: ${evt.operationName}`;
+    
+    eventDoctor.setAttribute("class", "event-docotr");
+    eventPatient.setAttribute("class", "event-patient");
+    eventBed.setAttribute("class", "event-bed");
+    eventEstimateTime.setAttribute("class", "event-estimateTime");
+    eventAna.setAttribute("class", "ana");
+    eventOperationName.setAttribute("class", "event-operationName");
+    
+    //最外層各項資料
+    oneEvent.setAttribute("class", "slot");
+    oneEvent.setAttribute("draggable", "true");
+    oneEvent.setAttribute("onclick", `openPopup(${evt.id})`);
+    oneEvent.setAttribute("id", `number${evt.id}`);
+
+    oneEvent.style.background = colors[color];
+    oneEvent.style.width = "95px";
+    oneEvent.style.left = "0%";
+    //oneEvent.style.width = evt.width + "%";
+    //oneEvent.style.left = evt.left + "%";
+    oneEvent.style.zIndex = evt.zindex;
+    oneEvent.style.height = (parseInt(evt.estimateTime)*2) + "px";
+    oneEvent.style.padding = "0%";
+
+    oneEvent.style.gridColumnStart = getColumnPosition(evt.operationRoom);
+    oneEvent.style.gridRowStart = getRowPosition(evt.estimateStartTime);
+
+    //中間層各項資料
+    eventColor.setAttribute("class", "event-color");
+
+    eventColor.style.height = '100%';
+    eventColor.style.width = '100%';
+    eventColor.style.background = colors[color];
+    eventColor.style.paddingLeft = "5px";
+    eventColor.style.paddingTop = "5px";
+    eventColor.style.position = 'absolute';
+    eventColor.style.top = '0px';
+
+
+    eventContainer.appendChild(oneEvent);
+}
+
+function getColumnPosition(roomNumber) {
+    let number = 1;
+    let room = '<%= room %>'.split(',');
+    for(let i = 0; i < room.length; i++) {
+        if(room[i] == roomNumber) {
+            return number;
+        } else {
+            number += 1;
+        }
+    };
+};
+
+function getRowPosition(startTime) {
+    const h = parseInt(startTime.split(":")[0]);
+    const m = parseInt(startTime.split(":")[1]);
+    const totalMinutes = (Math.abs(businessStartHours - h)) * 60 + m;
+    const rowPos = totalMinutes / timeslotInterval;
+    return rowPos;
+}
+
+function showTime(){
+        if(t==0){
+            $.ajax({
+                url: 'http://localhost:3000/schedule/operation/data',
+                method:'GET',
+                dataType:'json',
+                success: function(res) {
+
+                    let result = res;        
+                    
+                    for(let g = 0; g < parseInt(result['totalOperation']); g++) {
+
+                        var data = {
+                            date: result['taiwanDate'],
+                            chart: result['chart_no'][g],
+                            operationCode: result['or_code'][g],
+                            operationName: result['or_name'][g],
+                            operationRoom: result['or_room_no_2'][g],
+                            bed: result['bed_no'][g],
+                            time: result['or_apn'][g],
+                            estimateStartTime: result['expect_or_start_time'][g],
+                            estimateTime: result['duration'][g],
+                            operationKind: result['or_type_2'][g],
+                            operationAgain: result['return_flag'][g],
+                            naKind: result['an_class_2'][g],
+                            fastingDate: result['npo_date'][g],
+                            fastingTime: result['npo_time'][g],
+                            diagnosisCode: result['diagnosis_code'][g],
+                            diagnosisName: result['diagnosis_english_name'][g],
+                            doctorName: result['doctor_name'][g],
+                            department: result['department_name'][g],
+                            patientName: result['patient_name'][g],
+                            anaYesNo: result['anaYesNo'][g],
+                        };
+
+                        id++;
+                        eventContainer.innerHTML = "";
+                        events = [];
+                        events.push(data);
+                        processEvents();
+                        information = blockNeedData(operationBlock);
+                        }
+
+                        loadEvents();
+
+                        eventsByDay = {};
+                        id = 1;
+
+                }, error:function(err) {console.log('error')}
+            });
+            t = 60;
+        };
+        document.getElementById('update').innerHTML= t;
+        t -= 1;
+        setTimeout('showTime()',1000);
+};
+
+function place_hr(y_pos){
+    var d = document.getElementById('timeline');
+    d.style.position = "absolute";
+    d.style.top = y_pos+'px';
+}
+
+function get_time(){
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var time = 84.6+hours*120+minutes*2;
+    place_hr(time);
+    colorSituation(hours, minutes);
+    setTimeout("get_time()",1000);
+}
+
+function openPopup(id){
+    $('.bed').text(bed[id]);
+    $('.estimateTime').text(estimateTime[id]);
+    $('.anaYesNo').text(anaYesNo[id]);
+    $('.operationName').text(operationName[id]);
+    $('.chart').text(chart[id]);
+    $('.operationKind').text(operationKind[id]);
+    $('.time').text(time[id]);
+    $('.operationAgain').text(operationAgain[id]);
+    $('.estimateStartTime').text(estimateStartTime[id]);
+    $('.fastingDate').text(fastingDate[id]);
+    $('.fastingTime').text(fastingTime[id]);
+    $('.anaKind').text(anaKind[id]);
+    $('.diagnosisCode').text(diagnosisCode[id]);
+    $('.diagnosisName').text(diagnosisName[id]);
+    $('.operationName').text(operationName[id]);
+    $('.operationCode').text(operationCode[id]);
+    $('.department').text(department[id]);
+    $('.doctorName').text(doctorName[id]);
+    $('.patientName').text(patientName[id]);
+
+    popup.classList.add("open-popup");
+    
+}
+
+function closePopup(){
+    popup.classList.remove("open-popup");
+}
+
+function colorSituation(hour, minute) {
+    let operationColor = document.getElementsByClassName('event-color');
+    let cssRule = document.styleSheets;
+    let currentTimePosition = hour * 60 + minute;
+
+    for(let k = 0; k < information.length; k++) {
+        if(currentTimePosition < information[k]['realStart']) {
+            if(currentTimePosition > information[k]['estimateStart']) {
+                //逾時
+                //operationBlock[k]['style']['backgroundColor'] = '#fff2cc';
+                operationColor[k]['style']['backgroundColor'] = '#fff2cc';
+            } 
+        } else if(currentTimePosition > information[k]['realStart']) {
+            if(currentTimePosition > information[k]['realEnd']) {
+                //結束
+                //進行中轉結束判斷式
+                if(information[k]['frequency'] == 1) {
+                    let number = operationBlock[k]['id'].split('number')[1];
+                    let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
+                    for(let i = 0; i < cssRule[0].cssRules; i++) {
+                        if(cssRule[0].cssRules[i].cssText == `#${operationBlock[k]['id']} .event-color { background-color: #6cc570 !important ; animation: conduct${number} ${currentDuration}s linear; }`) {
+                            cssRule[0].deleteRule(i);
+                        }
+                    }
+                    information[k]['frequency'] == 0;
+                    operationColor[k]['style']['backgroundColor'] = '#eeeeee';
+                } else {
+                    //operationBlock[k]['style']['backgroundColor'] = '#eeeeee';
+                    operationColor[k]['style']['backgroundColor'] = '#eeeeee';
+                }
+
+            } else if(currentTimePosition < information[k]['realEnd']) {
+                if(currentTimePosition < information[k]['shouldEnd'] && information[k]['frequency'] == 0) {
+                    //進行中
+                    let number = operationBlock[k]['id'].split('number')[1];
+                    let length = cssRule[0].cssRules.length;
+                    let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
+                    let currentPassTime = -(currentTimePosition - information[k]['realStart']) * 60;
+
+                    //以width來當作判斷長度的標準
+                    cssRule[0].insertRule(`#${operationBlock[k]['id']} .event-color{background-color: #6cc570 !important; animation: conduct${number} ${currentDuration}s linear;}`, length);
+                    cssRule[0].insertRule(`@keyframes conduct${number} {from {height:${(currentTimePosition - information[k]['realStart']) / information[k]['duration'] * 100}%} to {height: 100%;}}`, length + 1);
+
+                    information[k]['frequency'] = 1;
+                } else if(currentTimePosition > information[k]['shouldEnd']) {
+                    //超時
+                    //進行中轉結束判斷式
+                    if(information[k]['frequency'] == 1) {
+                        let number = operationBlock[k]['id'].split('number')[1];
+                        let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
+                        for(let i = 0; i < cssRule[0].cssRules; i++) {
+                            if(cssRule[0].cssRules[i].cssText == `#${operationBlock[k]['id']} .event-color { background-color: #6cc570 !important ; animation: conduct${number} ${currentDuration}s linear; }`) {
+                                cssRule[0].deleteRule(i);
+                            }
+                        }
+                        information[k]['frequency'] == 0;
+                        operationColor[k]['style']['backgroundColor'] = '#f44336';
+                    } else {
+                        //operationBlock[k]['style']['backgroundColor'] = '#f44336';
+                        operationColor[k]['style']['backgroundColor'] = '#f44336';
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+function blockNeedData(operationBlock) {
+    let blocks = [];
+    
+    for(let j = 0; j < operationBlock.length; j++) {
+        let block = {};
+        
+        let number = operationBlock[j]['id'].split('number');
+        let height = parseInt(operationBlock[j]['style']['height']);
+        let estimateStart = parseInt(operationBlock[j]['style']['grid-row-start']);
+
+        
+        let realStart = getRowPosition(realStartTime[number[1]]);
+        let realEnd = getRowPosition(realEndTime[number[1]]);
+
+        let shouldEnd = realStart + height / 2;
+        let column = parseInt(operationBlock[j]['style']['grid-column-start']);
+        
+        
+        block.estimateStart = estimateStart;
+        block.realStart = realStart;
+        block.realEnd = realEnd;
+        block.shouldEnd = shouldEnd;
+        block.duration = height / 2;
+        block.column = column;
+        block.frequency = 0;
+        blocks[j] = block;
+    }
+
+    return blocks
+}
+</script>

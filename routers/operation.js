@@ -5,7 +5,7 @@ const encoder = bodyParser.urlencoded();
 const connection = require('../database_connecting');
 const changeData = require('../content_change');
 
-const needDataPtor = 'OR_DATE, CHART_NO, OR_DUPLICATE_NO, VS_NO, OR_ROOM_NO_2, BED_NO, OR_APN, EXPECT_OR_START_TIME, EXPECT_OR_END_TIME, OR_TYPE_2, RETURN_FLAG, AN_CLASS, NPO_DATE, NPO_TIME, DIAGNOSIS_CODE, DIAGNOSIS_ENGLISH_NAME';
+const needDataPtor = 'OR_DATE, CHART_NO, OR_DUPLICATE_NO, VS_NO, OR_ROOM_NO_2, BED_NO, OR_APN, EXPECT_OR_START_TIME, EXPECT_OR_END_TIME, OR_IN_TIME, OR_OUT_TIME, OR_TYPE_2, RETURN_FLAG, AN_CLASS, NPO_DATE, NPO_TIME, DIAGNOSIS_CODE, DIAGNOSIS_ENGLISH_NAME';
 const needDataPtordrev = 'OR_CODE, OR_NAME, OR_DIV_NO, OR_DOCTOR_NO';
 
 router.get("/",function(req,res){
@@ -25,6 +25,8 @@ router.get("/",function(req,res){
     var or_apn = [];
     var expect_or_start_time = [];
     var expect_or_end_time = [];
+    var or_in_time = [];
+    var or_out_time = [];
     var or_type_2 = [];
     var return_flag = [];
     var an_class_2 = [];
@@ -111,6 +113,16 @@ router.get("/",function(req,res){
                 new_expect_or_end_time = changeData.time_change(expect_or_end_time);
 
                 for(let j = 0; j < totalOperation; j++) {
+                    or_in_time.push(result[j]['OR_IN_TIME']);
+                }
+                new_or_in_time = changeData.time_change(or_in_time);
+
+                for(let j = 0; j < totalOperation; j++) {
+                    or_out_time.push(result[j]['OR_OUT_TIME']);
+                }
+                new_or_out_time = changeData.time_change(or_out_time);
+
+                for(let j = 0; j < totalOperation; j++) {
                     or_type_2.push(result[j]['OR_TYPE_2']);
                 }
                 new_or_type_2 = changeData.or_type_2_change(or_type_2) 
@@ -138,7 +150,7 @@ router.get("/",function(req,res){
                 //need calculate
                 for(let j = 0; j < totalOperation; j++) {
                     let start = new Date(date + 'T' + new_expect_or_start_time[j]);
-                    let end = new Date(date + 'T' + expect_or_end_time[j]);
+                    let end = new Date(date + 'T' + new_expect_or_end_time[j]);
                     let time = (end - start) / 1000 / 60;
                     duration.push(time);
                 }
@@ -180,10 +192,11 @@ router.get("/",function(req,res){
                                         res.render('has_operation_schedule_page', {
                                             room: room, username: username, taiwanDate: global.taiwanDate, chart_no: chart_no, or_code: or_code,
                                             or_name: or_name, or_room_no_2: or_room_no_2, bed_no: bed_no, or_apn: new_or_apn, expect_or_start_time: new_expect_or_start_time,
-                                            duration: duration, or_type_2: new_or_type_2, return_flag: new_return_flag,  an_class_2: new_an_class_2, npo_date: new_npo_date,
-                                            npo_time: new_npo_time, diagnosis_code: diagnosis_code, diagnosis_english_name: diagnosis_english_name, doctor_name:doctor_name,
-                                            department_name: department_name, patient_name: patient_name, totalOperation: totalOperation, urgentOperation: urgentOperation,
-                                            reserveOperation: reserveOperation, ana_yes_no: ana_yes_no
+                                            or_in_time: new_or_in_time, or_out_time: new_or_out_time, duration: duration, or_type_2: new_or_type_2,
+                                            return_flag: new_return_flag,  an_class_2: new_an_class_2, npo_date: new_npo_date,npo_time: new_npo_time,
+                                            diagnosis_code: diagnosis_code, diagnosis_english_name: diagnosis_english_name, doctor_name:doctor_name,
+                                            department_name: department_name, patient_name: patient_name, totalOperation: totalOperation,
+                                            urgentOperation: urgentOperation,reserveOperation: reserveOperation, ana_yes_no: ana_yes_no
                                         });
                                     }
                                 })
