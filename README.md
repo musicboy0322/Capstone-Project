@@ -22,10 +22,10 @@
   * 根據手術目前的狀態來給予對應的顏色
   
 * 目前畫面：
-![截圖 2023-03-21 下午3 56 59](https://user-images.githubusercontent.com/75659334/226546723-f8a7fb11-1d78-448b-b9b4-67fb43f62e16.png)
+
+    (以下個資都是用自己創建的名字，非本人姓名)
+    ![截圖 2023-03-21 下午3 56 59](https://user-images.githubusercontent.com/75659334/226546723-f8a7fb11-1d78-448b-b9b4-67fb43f62e16.png)
 
   
-* Demo 影片：
-
-  
+* Demo 影片：https://youtu.be/X7jBIBnZvag
   
