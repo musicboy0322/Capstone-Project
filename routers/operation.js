@@ -188,9 +188,8 @@ router.get("/",function(req,res){
                                     doctor_name.push(result[0]['醫生姓名']);
 
                                     if(j + 1 == totalOperation) {
-                                        console.log('sucessful');
                                         res.render('has_operation_schedule_page', {
-                                            room: room, username: username, taiwanDate: global.taiwanDate, chart_no: chart_no, or_code: or_code,
+                                            room: room, username: username,permission: permission,taiwanDate: global.taiwanDate, chart_no: chart_no, or_code: or_code,
                                             or_name: or_name, or_room_no_2: or_room_no_2, bed_no: bed_no, or_apn: new_or_apn, expect_or_start_time: new_expect_or_start_time,
                                             or_in_time: new_or_in_time, or_out_time: new_or_out_time, duration: duration, or_type_2: new_or_type_2,
                                             return_flag: new_return_flag,  an_class_2: new_an_class_2, npo_date: new_npo_date,npo_time: new_npo_time,
@@ -211,15 +210,69 @@ router.get("/",function(req,res){
 
 
 router.post("/",encoder,function(req,res){
-    global.date;
-    date = req.body.date;
-    let dateSplit = date.split('-');
-    taiwanYear = parseInt(dateSplit[0])-1911;
-    global.taiwanDate;
-    taiwanDate = taiwanYear.toString() + dateSplit[1] + dateSplit[2];
-    
-    res.redirect('/schedule/operation');
-    res.end();
+    if(typeof req.body.date != 'undefined') {
+        global.date;
+        date = req.body.date;
+        let dateSplit = date.split('-');
+        taiwanYear = parseInt(dateSplit[0])-1911;
+        global.taiwanDate;
+        taiwanDate = taiwanYear.toString() + dateSplit[1] + dateSplit[2];
+
+        res.redirect('/schedule/operation');
+        res.end();
+    } else {
+        //換刀房需要的資料，分別是 置換的刀房，置換的小時，置換的分鐘，置換的各項資訊(病歷號，持續時間，台灣日期)
+        let changeRoom = req.body.changeRoom;
+        let changeHour = req.body.changeHour.toString();
+        let changeMinute = req.body.changeMinute.toString();
+        let changeInformation = req.body.changeInformation.split('&');
+
+        //所選的日期，因為重新導入operation路徑會需要
+        let year = changeInformation[2].split('');
+        global.date = `${(parseInt(year[0] + year[1] + year[2]) + 1911).toString()}-${year[3] + year[4]}-${year[5] + year[6]}`; 
+        global.taiwanDate = changeInformation[2];
+
+        //因為預計結束時間也要換，所以這邊在做這個處理，先分別得出持續了多少小時和分鐘，接下來把持續的時間加進更正的開始時間，已得出更正的結束時間
+        let hour = parseInt(parseInt(changeInformation[1])/2/60);
+        let minute = parseInt(changeInformation[1]) / 2 % 60;
+        let endTimeMinute = parseInt(changeMinute) + minute;
+        let endTimeHour = parseInt(changeHour) + hour;
+        if(endTimeMinute > 60) {
+            endTimeMinute -= 60;
+            endTimeHour += 1;
+        }
+
+        //把交換刀房後的 expectStartTime 和 expectEndTime 給算出來
+        let changeExpectStartTime;
+        let changeExpectEndTime;
+        
+        if(endTimeMinute.toString().length == 1) {
+            changeExpectEndTime = endTimeHour.toString() + '0' + endTimeMinute.toString();
+        } else {
+            changeExpectEndTime = endTimeHour + endTimeMinute.toString();
+        }
+
+        if(changeMinute.length == 1) {
+            changeExpectStartTime = changeHour + '0' + changeMinute;
+        } else {
+            changeExpectStartTime = changeHour + changeMinute;
+        }
+
+        //總共需要五個值，分別是2個 where 的判斷式，taiwanDate (台灣日期)，changeInfromation[0] (病歷號)，3個要變動的值，changeRoom(刀房)，changeExpectStartTime(預期開始時間)，changeExpectEndTime(預期結束時間)
+        connection.connect_hospital.query(`UPDATE ptor SET OR_ROOM_NO_2 = "${changeRoom}", EXPECT_OR_START_TIME = ${changeExpectStartTime}, EXPECT_OR_END_TIME = ${changeExpectEndTime} 
+            where OR_DATE = ${taiwanDate} and CHART_NO = ${changeInformation[0]} and OR_DUPLICATE_NO = 0`, (err, result) => {
+                try {
+                    console.log('update sucess');
+                    res.redirect('/schedule/operation');
+                    res.end();
+                } catch(err) {
+                    console.log('update fail');
+                }
+                
+            });
+        
+    }
+
 });
 
 module.exports = router;

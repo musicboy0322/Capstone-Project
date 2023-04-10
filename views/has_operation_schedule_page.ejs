@@ -32,7 +32,7 @@
         <div class="header">
             <ul class="operation-room">
                 <% for(let i = 0; i < room.length; i++) { %>
-                    <li><%= room[i] %>號房</li>
+                    <li><%= room[i] %>房</li>
                 <% }; %>
             </ul>
         </div>
@@ -69,7 +69,7 @@
         <div class="timeline">
             <hr id="timeline" color="crimson">
         </div>
-    
+
         <div class="event-container">
         </div>
 
@@ -116,7 +116,7 @@
                 </tr>
                 <tr>
                     <td>麻醉類別</td>
-                    <td class = 'anaKind''></td>
+                    <td class = 'anaKind'></td>
                     <td>訪視備註</td>
                     <td colspan="3" class="note2"></td>
                 </tr>
@@ -159,7 +159,35 @@
             </form>
             <br>
             <center><button class='close' type="button" onclick="closePopup()">關閉</button></center>
+        </div>
 
+        <div class="confirmChange">
+            <form style="width: 100%; height: 100%;"action='' method="post">
+                <div class="changeContent">
+                    <label>確定將刀房換至:
+                        <select name="changeRoom" class="changeRoom">
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>05</option>
+                            <option>06</option>
+                            <option>07</option>
+                            <option>08</option>
+                            <option>09</option>
+                            <option>11</option>
+                            <option>12</option>
+                            <option>13</option>
+                            <option>8A</option>
+                        </select> 房
+                    </label>
+                    <label><input type="number" name="changeHour" class="changeHour" min="0" max="23"> 時</label>
+                    <label><input type="number" name="changeMinute" class="changeMinute" min="0" max="59"> 分</label>
+                </div>
+                <div class="buttonsSetting">
+                    <button type="button" class="cancelButton">取消</button>
+                    <button type="submit" class="changeInformation" name="changeInformation">確定</button>
+                </div>
+            </form>
         </div>
 
     </div>
@@ -207,33 +235,24 @@
     let anaYesNo = '<%= ana_yes_no %>'.split(',');
     let realStartTime = '<%= or_in_time %>'.split(',');
     let realEndTime = '<%= or_out_time %>'.split(',');
+    let permission = '<%= permission %>';
+    let taiwanDate = '<%= taiwanDate %>';
+
+    dropAreaCreate(eventContainer);
     
     inputRoom();
 
+    permissionConfirm(permission);
+
     //時間到要更新手術資料的部分
-    var t = 20;
+    var t = 60;
     showTime();
 
-    //移動手術房的部分
     addLattice();
 
     //顯示詳細資料的部分
     let popup = document.getElementById("popup");
-    let blur = document.getElementById("blur");
-
-    let moveRoom = document.querySelectorAll('.slot');
-    moveRoom.forEach(moveRoom => {
-        moveRoom.addEventListener('dragstart', (e) => {
-            console.log("hi");
-        });
-    });
-
-    let place = document.querySelectorAll('.place');
-    place.forEach(place => {
-        place.addEventListener('dragenter', (e) => {
-            console.log('Fuck');
-        })
-    });
+    let calendarBlur = document.getElementsByClassName("calendar-container")[0];
 
     //為了要讓進行中的顏色只進行一次的新增規則而設置，會使用到的地方位在color_situation()
     //let frequency = 0;
@@ -250,9 +269,8 @@
             for(let a = 0; a < 48; a++) {
             let row = a * 60;
             let place = document.createElement('div');
+            
             place.setAttribute('class', 'place' );
-            place.setAttribute('droppable', 'true');
-
             place.style.width = 121.1 + 'px';
             place.style.height = 60 + 'px';
             place.style.gridRowStart = row;
@@ -294,7 +312,7 @@
 
 
             id++;
-            eventContainer.innerHTML = "";
+            //eventContainer.innerHTML = "";
             events = [];
             events.push(data);
             processEvents();
@@ -390,9 +408,9 @@ function renderEvent(evt) {
     //設定各項內容
     //最內層各項資料
     eventDoctor.innerHTML = `醫生: ${evt.doctorName}`;
-    eventPatient.innerHTML = `病患: ${evt.patientName}`;
+    eventPatient.innerHTML = `病人: ${evt.patientName}`;
     eventBed.innerHTML = `床號: ${evt.bed}`;
-    eventEstimateTime.innerHTML = `時間: ${evt.estimateTime}`;
+    eventEstimateTime.innerHTML = `時間: ${evt.estimateTime}分鐘`;
     eventAna.innerHTML = `麻醉: ${evt.anaYesNo}`;
     eventOperationName.innerHTML = `手術: ${evt.operationName}`;
     
@@ -405,7 +423,6 @@ function renderEvent(evt) {
     
     //最外層各項資料
     oneEvent.setAttribute("class", "slot");
-    oneEvent.setAttribute("draggable", "true");
     oneEvent.setAttribute("onclick", `openPopup(${evt.id})`);
     oneEvent.setAttribute("id", `number${evt.id}`);
 
@@ -529,9 +546,10 @@ function get_time(){
     setTimeout("get_time()",1000);
 }
 
+
 function openPopup(id){
     $('.bed').text(bed[id]);
-    $('.estimateTime').text(estimateTime[id]);
+    $('.estimateTime').text(`${estimateTime[id]}分鐘`);
     $('.anaYesNo').text(anaYesNo[id]);
     $('.operationName').text(operationName[id]);
     $('.chart').text(chart[id]);
@@ -551,6 +569,7 @@ function openPopup(id){
     $('.patientName').text(patientName[id]);
 
     popup.classList.add("open-popup");
+    
     
 }
 
@@ -656,4 +675,84 @@ function blockNeedData(operationBlock) {
 
     return blocks
 }
+
+function dropAreaCreate(dropPlace) {
+    for(let i = 0; i < 12; i++) {
+        for(let j = 0; j < 48; j++) {
+            let dropBlock = document.createElement('div');
+            dropBlock.setAttribute('class', 'dropBlock');
+            dropBlock.style.height = '59.2px';
+            dropBlock.style.width = '88px'
+            dropBlock.style.gridColumnStart = i + 1;
+            dropBlock.style.gridRowStart = 1 + (30 * j);
+            dropBlock.style.position = 'absolute';
+
+            eventContainer.appendChild(dropBlock);
+        }
+    }
+}
+
+function permissionConfirm(permission) {
+    if(permission == '1') {
+        let dragItem = document.getElementsByClassName('slot');
+        let dropArea = document.getElementsByClassName('dropBlock');
+        let target;
+
+        //設定可拖曳的物件
+        for(let i = 0; i < dragItem.length; i++) {
+            dragItem[i].setAttribute('draggable', 'true');
+            dragItem[i].addEventListener('dragstart', e => {
+                target = dragItem[i];
+            })
+        }
+        
+        //設定可放置的區域
+        for(let i = 0; i < dropArea.length; i++) {
+            dropArea[i].addEventListener('dragenter', e => {
+                dropArea[i].style.background = '#c8bbbb';
+                e.preventDefault();
+            });
+            dropArea[i].addEventListener('dragover', e => {
+                e.preventDefault();
+            })
+            dropArea[i].addEventListener('dragleave', e => {
+                dropArea[i].style.background = 'white';
+            });
+            dropArea[i].addEventListener('drop', e => {
+                dropArea[i].style.background = 'white';
+                let changeRow = dropArea[i].style.gridRowStart - 1;
+                let changeColumn = dropArea[i].style.gridColumnStart;
+
+                let changeHour = parseInt(changeRow / 60);
+                let changeMinute = changeRow % 60;
+
+                let confirmChange = document.getElementsByClassName('confirmChange')[0];
+                let room = document.getElementsByClassName('changeRoom')[0];
+                let hour = document.getElementsByClassName('changeHour')[0];
+                let minute = document.getElementsByClassName('changeMinute')[0];
+                let information = document.getElementsByClassName('changeInformation')[0];
+                
+                hour.setAttribute('value', changeHour);
+                minute.setAttribute('value', changeMinute);
+                room[changeColumn-1].setAttribute('selected', 'selected');
+                information.setAttribute('value', `${chart[target.id.split('r')[1]]}&${target.style.height}&${taiwanDate}`);
+
+                confirmChange.classList.add("open-confirmChange");
+
+                //設定是否移動刀房視窗的取消鍵
+                let cancel = document.getElementsByClassName('cancelButton')[0];
+                cancel.addEventListener('click', e => {
+                    confirmChange.classList.remove('open-confirmChange');
+                });
+                
+                //target.style.gridRowStart = changeRow;
+                //target.style.gridColumnStart = changeColumn;
+            })
+        }
+
+        
+
+    }
+}
+
 </script>

@@ -24,13 +24,14 @@ router.get("/",function(req,res){
                     }
                 }
             };
-           room.pop();
+            room.pop();
             
            //username
-           connect.connect_own.query(`select 名字 from 使用者帳號 where ID = ${global.ID}`, (err, result) => {
+            connect.connect_own.query(`select 名字, 控台人員 from 使用者帳號 where ID = ${global.ID}`, (err, result) => {
                 username = result[0]['名字'];
+                permission = result[0]['控台人員'];
                 res.render('operation_schedule_page', {room: room, username: username});
-           });
+            });
         });
     });    
     

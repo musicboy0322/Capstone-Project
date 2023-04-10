@@ -82,7 +82,6 @@ ul {
   grid-area: main;
   position: relative;
   white-space: nowrap;
-  droppable: true;
 
   background: repeating-linear-gradient(
     to right,
@@ -199,23 +198,22 @@ button {
   background: #e5e5e5;
   border-radius: 6px;
   position: fixed;
-  left: 50%;
+  top: 121px;
+  left: 378.8px;
   text-align: center;
   padding: 0 30px 30px;
   color: #333;
   visibility: hidden;
-  transition: transform 0.4s, top 0.4s;
   z-index: 8;
+}
+
+.open-calendar {
+  opacity: 0.5;
 }
 
 .open-popup{
   visibility: visible;
-  top: 50%;
-  transform: translate(-50%,-50%) scale(1);
-}
-
-.blur {
-  backdrop-filter:blur(5px);
+  opacity: 1;
 }
 
 .popup button{
@@ -279,4 +277,47 @@ button {
   filter: blur(20px);
   pointer-events: none;
   user-select: none;
+}
+
+.confirmChange {
+  position: fixed;
+  top: 336px;
+  left: 558.8px;
+  border: 1px solid black;
+  border-radius: 6px;
+  width: 400px;
+  height: 80px;
+  z-index: 8;
+  background: #e5e5e5;
+  visibility: hidden;
+}
+
+.open-confirmChange {
+  visibility: visible;
+}
+
+.confirmChange form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.changeContent {
+  margin: 5px;
+}
+
+.buttonsSetting {
+  display: flex;
+  justify-content: space-around;
+}
+
+.buttonsSetting button {
+  border-radius: 4px;
+  margin: 5px;
+  margin-top: 0%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
