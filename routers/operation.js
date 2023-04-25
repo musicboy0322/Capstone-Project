@@ -237,7 +237,7 @@ router.post("/",encoder,function(req,res){
         let minute = parseInt(changeInformation[1]) / 2 % 60;
         let endTimeMinute = parseInt(changeMinute) + minute;
         let endTimeHour = parseInt(changeHour) + hour;
-        if(endTimeMinute > 60) {
+        if(endTimeMinute >= 60) {
             endTimeMinute -= 60;
             endTimeHour += 1;
         }

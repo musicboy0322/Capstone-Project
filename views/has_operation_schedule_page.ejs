@@ -264,6 +264,8 @@
     //顯示時間軸
     get_time();
 
+    jumpClick();
+
     function addLattice() {
         for(let b = 0; b < 12; b++) {
             for(let a = 0; a < 48; a++) {
@@ -534,6 +536,7 @@ function place_hr(y_pos){
     var d = document.getElementById('timeline');
     d.style.position = "absolute";
     d.style.top = y_pos+'px';
+    d.style.zIndex = 4;
 }
 
 function get_time(){
@@ -754,5 +757,12 @@ function permissionConfirm(permission) {
 
     }
 }
+
+function jumpClick(){
+        let timeLine = document.querySelector('#timeline');
+        window.scrollTo({
+            top: parseInt(timeLine.style.top) - 480
+        });
+    }
 
 </script>

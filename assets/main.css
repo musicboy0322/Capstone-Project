@@ -1,6 +1,9 @@
 header {
-  margin: 20px 10px;
-
+  position: sticky;
+  top: 0px;
+  z-index: 5;
+  background: white;
+  padding: 15px 15px;
 }
 
 header form {
@@ -45,7 +48,7 @@ ul {
 .header {
   grid-area: header;
   position: sticky;  /*固定位置*/
-  top: 0;
+  top: 54.5px;
   z-index: 5;
 }
 
