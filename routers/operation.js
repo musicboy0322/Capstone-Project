@@ -69,7 +69,7 @@ router.get("/",function(req,res){
             connection.connect_hospital.query(`select ${needDataPtor} from PTOR where OR_DATE = ${global.taiwanDate} and OR_ROOM_NO_2 != '' and OR_ROOM_NO_2 != 'DR' and OR_DUPLICATE_NO != '1' and EXPECT_OR_START_TIME != '0'`, (err, result) => {
                 let totalOperation = result.length;
                 let urgentOperation = 0;
-                let reserveOperation = 0;
+                let reserveOperation = 0
 
                 //don't need translate
                 for(let j = 0; j < totalOperation; j++) {
@@ -215,7 +215,6 @@ router.post("/",encoder,function(req,res){
         date = req.body.date;
         let dateSplit = date.split('-');
         taiwanYear = parseInt(dateSplit[0])-1911;
-        global.taiwanDate;
         taiwanDate = taiwanYear.toString() + dateSplit[1] + dateSplit[2];
 
         res.redirect('/schedule/operation');
