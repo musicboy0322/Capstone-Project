@@ -242,7 +242,7 @@
 
     //時間到要更新手術資料的部分
     var t = 20;
-    showTime();
+    //showTime();
 
     addLattice();
 
@@ -264,7 +264,7 @@
 
     //移動刀房的函式
     dropAreaCreate(eventContainer);
-    permissionConfirm(permission, taiwanDate);
+    permissionConfirm(permission, taiwanDate, operationBlock);
     
 
     function addLattice() {
@@ -709,7 +709,7 @@ function permissionConfirm(permission, date) {
 
     let currentDate = currentYear + currentMonth + currentDay;
 
-    if(permission == '1' && date == currentDate) {
+    if(permission == '1' ) {
         let dragItem = document.getElementsByClassName('slot');
         let dragColor = document.getElementsByClassName('event-color');
         let dropArea = document.getElementsByClassName('dropBlock');
@@ -717,7 +717,7 @@ function permissionConfirm(permission, date) {
 
         //設定可拖曳的物件
         for(let i = 0; i < dragItem.length; i++) {
-            if(dragColor[i].style.background == 'white') {
+            if(dragColor[i].style.background == 'white' &&  information[i]['frequency'] == 0) {
                 dragItem[i].setAttribute('draggable', 'true');
                 dragItem[i].addEventListener('dragstart', e => {
                 target = dragItem[i];
