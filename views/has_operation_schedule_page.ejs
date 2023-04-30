@@ -426,7 +426,7 @@ function renderEvent(evt) {
     
     //最外層各項資料
     oneEvent.setAttribute("class", "slot");
-    oneEvent.setAttribute("onclick", `openPopup(${evt.id})`);
+    oneEvent.setAttribute("onclick", `openPopup(${JSON.stringify(evt)})`);
     oneEvent.setAttribute("id", `number${evt.id}`);
 
     oneEvent.style.background = colors[color];
@@ -555,29 +555,28 @@ function get_time(){
 }
 
 
-function openPopup(id){
-    $('.bed').text(bed[id]);
-    $('.estimateTime').text(`${estimateTime[id]}分鐘`);
-    $('.anaYesNo').text(anaYesNo[id]);
-    $('.operationName').text(operationName[id]);
-    $('.chart').text(chart[id]);
-    $('.operationKind').text(operationKind[id]);
-    $('.time').text(time[id]);
-    $('.operationAgain').text(operationAgain[id]);
-    $('.estimateStartTime').text(estimateStartTime[id]);
-    $('.fastingDate').text(fastingDate[id]);
-    $('.fastingTime').text(fastingTime[id]);
-    $('.anaKind').text(anaKind[id]);
-    $('.diagnosisCode').text(diagnosisCode[id]);
-    $('.diagnosisName').text(diagnosisName[id]);
-    $('.operationName').text(operationName[id]);
-    $('.operationCode').text(operationCode[id]);
-    $('.department').text(department[id]);
-    $('.doctorName').text(doctorName[id]);
-    $('.patientName').text(patientName[id]);
+function openPopup(evt){
+    $('.bed').text(evt.bed);
+    $('.estimateTime').text(`${evt.estimateTime}分鐘`);
+    $('.anaYesNo').text(evt.anaYesNo);
+    $('.operationName').text(evt.operationName);
+    $('.chart').text(evt.chart);
+    $('.operationKind').text(evt.operationKind);
+    $('.time').text(evt.time);
+    $('.operationAgain').text(evt.operationAgain);
+    $('.estimateStartTime').text(evt.estimateStartTime);
+    $('.fastingDate').text(evt.fastingDate);
+    $('.fastingTime').text(evt.fastingTime);
+    $('.anaKind').text(evt.anaKind);
+    $('.diagnosisCode').text(evt.diagnosisCode);
+    $('.diagnosisName').text(evt.diagnosisName);
+    $('.operationName').text(evt.operationName);
+    $('.operationCode').text(evt.operationCode);
+    $('.department').text(evt.department);
+    $('.doctorName').text(evt.doctorName);
+    $('.patientName').text(evt.patientName);
 
     popup.classList.add("open-popup");
-    
     
 }
 
