@@ -8,19 +8,19 @@ router.get("/",function(req,res){
     var room = [];
 
     // len
-    connect.connect_hospital.query('select count(OR_ROOM_NO_2) from PTOR where OR_ROOM_NO_2 != ""', (err, result) => {
+    connect.connect_hospital.query('select count(OR_ROOM_NO) from PTOR where OR_ROOM_NO != "" and OR_ROOM_NO != "7F" and OR_ROOM_NO != "C1" and OR_ROOM_NO != "C2" and OR_ROOM_NO != "ES" and OR_ROOM_NO != "G1" and OR_ROOM_NO != "G2"', (err, result) => {
 
-        let len = result[0]['count(OR_ROOM_NO_2)'];
+        let len = result[0]['count(OR_ROOM_NO)'];
         
         //room
-        connect.connect_hospital.query(`select OR_ROOM_NO_2 from PTOR where OR_ROOM_NO_2 != '' order by OR_ROOM_NO_2`, (err, result) => {
+        connect.connect_hospital.query(`select OR_ROOM_NO from PTOR where OR_ROOM_NO != '' and OR_ROOM_NO != "7F" and OR_ROOM_NO != "C1" and OR_ROOM_NO != "C2" and OR_ROOM_NO != "ES" and OR_ROOM_NO != "G1" and OR_ROOM_NO != "G2" order by OR_ROOM_NO`, (err, result) => {
             if(err) {
                 console.log(err);
             } else {
                 for(let i =0; i < len; i++) {
-                    roomNumber = room.includes(result[i]['OR_ROOM_NO_2']);
+                    roomNumber = room.includes(result[i]['OR_ROOM_NO']);
                     if(roomNumber == false) {
-                        room.push(result[i]['OR_ROOM_NO_2']);
+                        room.push(result[i]['OR_ROOM_NO']);
                     }
                 }
             };

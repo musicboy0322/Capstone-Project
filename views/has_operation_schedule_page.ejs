@@ -217,7 +217,7 @@
     let chart = '<%= chart_no %>'.split(',');
     let operationCode = '<%= or_code %>'.split(',');
     let operationName = '<%= or_name %>'.split(',');
-    let operationRoom = '<%= or_room_no_2 %>'.split(',');
+    let operationRoom = '<%= or_room_no %>'.split(',');
     let bed = '<%= bed_no %>'.split(',');
     let time = '<%= or_apn %>'.split(',');
     let estimateStartTime = '<%= expect_or_start_time %>'.split(',');
@@ -587,46 +587,16 @@ function colorSituation(hour, minute) {
     let currentTimePosition = hour * 60 + minute;
 
     for(let k = 0; k < information.length; k++) {
-        if(currentTimePosition < information[k]['realStart']) {
-            if(currentTimePosition > information[k]['estimateStart']) {
-                //逾時
-                //operationBlock[k]['style']['backgroundColor'] = '#fff2cc';
-                operationColor[k]['style']['backgroundColor'] = '#fff2cc';
-            } 
-        } else if(currentTimePosition > information[k]['realStart']) {
-            if(currentTimePosition > information[k]['realEnd']) {
-                //結束
-                //進行中轉結束判斷式
-                if(information[k]['frequency'] == 1) {
-                    let number = operationBlock[k]['id'].split('number')[1];
-                    let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
-                    for(let i = 0; i < cssRule[0].cssRules; i++) {
-                        if(cssRule[0].cssRules[i].cssText == `#${operationBlock[k]['id']} .event-color { background-color: #6cc570 !important ; animation: conduct${number} ${currentDuration}s linear; }`) {
-                            cssRule[0].deleteRule(i);
-                        }
-                    }
-                    information[k]['frequency'] == 0;
-                    operationColor[k]['style']['backgroundColor'] = '#eeeeee';
-                } else {
-                    //operationBlock[k]['style']['backgroundColor'] = '#eeeeee';
-                    operationColor[k]['style']['backgroundColor'] = '#eeeeee';
-                }
-
-            } else if(currentTimePosition < information[k]['realEnd']) {
-                if(currentTimePosition < information[k]['shouldEnd'] && information[k]['frequency'] == 0) {
-                    //進行中
-                    let number = operationBlock[k]['id'].split('number')[1];
-                    let length = cssRule[0].cssRules.length;
-                    let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
-                    let currentPassTime = -(currentTimePosition - information[k]['realStart']) * 60;
-
-                    //以width來當作判斷長度的標準
-                    cssRule[0].insertRule(`#${operationBlock[k]['id']} .event-color{background-color: #6cc570 !important; animation: conduct${number} ${currentDuration}s linear;}`, length);
-                    cssRule[0].insertRule(`@keyframes conduct${number} {from {height:${(currentTimePosition - information[k]['realStart']) / information[k]['duration'] * 100}%} to {height: 100%;}}`, length + 1);
-
-                    information[k]['frequency'] = 1;
-                } else if(currentTimePosition > information[k]['shouldEnd']) {
-                    //超時
+        if(information[k]['realStart'] != 0) {
+            if(currentTimePosition < information[k]['realStart']) {
+                if(currentTimePosition > information[k]['estimateStart']) {
+                    //逾時
+                    //operationBlock[k]['style']['backgroundColor'] = '#fff2cc';
+                    operationColor[k]['style']['backgroundColor'] = '#fff2cc';
+                } 
+            } else if(currentTimePosition > information[k]['realStart']) {
+                if(currentTimePosition > information[k]['realEnd']) {
+                    //結束
                     //進行中轉結束判斷式
                     if(information[k]['frequency'] == 1) {
                         let number = operationBlock[k]['id'].split('number')[1];
@@ -637,12 +607,43 @@ function colorSituation(hour, minute) {
                             }
                         }
                         information[k]['frequency'] == 0;
-                        operationColor[k]['style']['backgroundColor'] = '#f44336';
+                        operationColor[k]['style']['backgroundColor'] = '#eeeeee';
                     } else {
-                        //operationBlock[k]['style']['backgroundColor'] = '#f44336';
-                        operationColor[k]['style']['backgroundColor'] = '#f44336';
+                        //operationBlock[k]['style']['backgroundColor'] = '#eeeeee';
+                        operationColor[k]['style']['backgroundColor'] = '#eeeeee';
                     }
+                } else if(currentTimePosition < information[k]['realEnd']) {
+                    if(currentTimePosition < information[k]['shouldEnd'] && information[k]['frequency'] == 0) {
+                        //進行中
+                        let number = operationBlock[k]['id'].split('number')[1];
+                        let length = cssRule[0].cssRules.length;
+                        let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
+                        let currentPassTime = -(currentTimePosition - information[k]['realStart']) * 60;
 
+                        //以width來當作判斷長度的標準
+                        cssRule[0].insertRule(`#${operationBlock[k]['id']} .event-color{background-color: #6cc570 !important; animation: conduct${number} ${currentDuration}s linear;}`, length);
+                        cssRule[0].insertRule(`@keyframes conduct${number} {from {height:${(currentTimePosition - information[k]['realStart']) / information[k]['duration'] * 100}%} to {height: 100%;}}`, length + 1);
+
+                        information[k]['frequency'] = 1;
+                    } else if(currentTimePosition > information[k]['shouldEnd']) {
+                        //超時
+                        //進行中轉結束判斷式
+                        if(information[k]['frequency'] == 1) {
+                            let number = operationBlock[k]['id'].split('number')[1];
+                            let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
+                            for(let i = 0; i < cssRule[0].cssRules; i++) {
+                                if(cssRule[0].cssRules[i].cssText == `#${operationBlock[k]['id']} .event-color { background-color: #6cc570 !important ; animation: conduct${number} ${currentDuration}s linear; }`) {
+                                    cssRule[0].deleteRule(i);
+                                }
+                            }
+                            information[k]['frequency'] == 0;
+                            operationColor[k]['style']['backgroundColor'] = '#f44336';
+                        } else {
+                            //operationBlock[k]['style']['backgroundColor'] = '#f44336';
+                            operationColor[k]['style']['backgroundColor'] = '#f44336';
+                        }
+
+                    }
                 }
             }
         }
@@ -707,9 +708,8 @@ function permissionConfirm(permission, date) {
     if(currentMonth.length == 1) currentMonth = '0' + currentMonth;
 
     let currentDate = currentYear + currentMonth + currentDay;
-    console.log(currentDate);
 
-    if(permission == '1' && date == '1111101') {
+    if(permission == '1' && date == currentDate) {
         let dragItem = document.getElementsByClassName('slot');
         let dragColor = document.getElementsByClassName('event-color');
         let dropArea = document.getElementsByClassName('dropBlock');
