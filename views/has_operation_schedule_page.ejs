@@ -240,9 +240,13 @@
     
     inputRoom();
 
+    //下面 block_need_data 和 color_situation 所會需要的資料
+    let operationBlock = document.getElementsByClassName('slot');
+    let information = blockNeedData(operationBlock);
+
     //時間到要更新手術資料的部分
-    var t = 20;
-    //showTime();
+    var t = 25;
+    showTime();
 
     addLattice();
 
@@ -252,10 +256,6 @@
 
     //為了要讓進行中的顏色只進行一次的新增規則而設置，會使用到的地方位在color_situation()
     //let frequency = 0;
-    
-    //下面 block_need_data 和 color_situation 所會需要的資料
-    let operationBlock = document.getElementsByClassName('slot');
-    let information = blockNeedData(operationBlock);
 
     //顯示時間軸
     get_time();
@@ -494,7 +494,7 @@ function showTime(){
                             chart: result['chart_no'][g],
                             operationCode: result['or_code'][g],
                             operationName: result['or_name'][g],
-                            operationRoom: result['or_room_no_2'][g],
+                            operationRoom: result['or_room_no'][g],
                             bed: result['bed_no'][g],
                             time: result['or_apn'][g],
                             estimateStartTime: result['expect_or_start_time'][g],
@@ -517,16 +517,20 @@ function showTime(){
                         events = [];
                         events.push(data);
                         processEvents();
-                        }
+                    }
 
                         loadEvents();
 
                         eventsByDay = {};
-                        id = 1;
+                        id = 0;
+                        operationBlock = document.getElementsByClassName('slot');
+                        information = blockNeedData(operationBlock);
+                        dropAreaCreate(eventContainer);
+                        permissionConfirm(permission, taiwanDate, operationBlock);
 
                 }, error:function(err) {console.log('error')}
             });
-            t = 20;
+            t = 25;
         };
         document.getElementById('update').innerHTML= t;
         t -= 1;

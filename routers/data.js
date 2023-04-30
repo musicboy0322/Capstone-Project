@@ -3,7 +3,7 @@ const router = express.Router();
 const connection = require('../database_connecting');
 const changeData = require('../content_change');
 
-const needDataPtor = 'OR_DATE, CHART_NO, OR_DUPLICATE_NO, VS_NO, OR_ROOM_NO_2, BED_NO, OR_APN, EXPECT_OR_START_TIME, EXPECT_OR_END_TIME, OR_TYPE_2, RETURN_FLAG, AN_CLASS, NPO_DATE, NPO_TIME, DIAGNOSIS_CODE, DIAGNOSIS_ENGLISH_NAME';
+const needDataPtor = 'OR_DATE, CHART_NO, OR_DUPLICATE_NO, VS_NO, OR_ROOM_NO, BED_NO, OR_APN, EXPECT_OR_START_TIME, EXPECT_OR_END_TIME, OR_TYPE_2, RETURN_FLAG, AN_CLASS, NPO_DATE, NPO_TIME, DIAGNOSIS_CODE, DIAGNOSIS_ENGLISH_NAME';
 const needDataPtordrev = 'OR_CODE, OR_NAME, OR_DIV_NO, OR_DOCTOR_NO';
 
 router.get("/",function(req,res){
@@ -13,7 +13,7 @@ router.get("/",function(req,res){
     //don't need translate
     var chart_no = [];
     var vs_no = [];
-    var or_room_no_2 = [];
+    var or_room_no = [];
     var bed_no = [];
     var diagnosis_code = [];
     var diagnosis_english_name = [];
@@ -43,7 +43,7 @@ router.get("/",function(req,res){
     var doctor_name = [];
 
     //operation data
-    connection.connect_hospital.query(`select ${needDataPtor} from PTOR where OR_DATE = ${global.taiwanDate} and OR_ROOM_NO_2 != '' and OR_ROOM_NO_2 != 'DR' and OR_DUPLICATE_NO != '1' and EXPECT_OR_START_TIME != '0'`, (err, result) => {
+    connection.connect_hospital.query(`select ${needDataPtor} from PTOR where OR_DATE = ${global.taiwanDate} and OR_ROOM_NO != '' and OR_ROOM_NO != 'DR' and OR_ROOM_NO != "7F" and OR_ROOM_NO != "C1" and OR_ROOM_NO != "C2" and OR_ROOM_NO != "ES" and OR_ROOM_NO != "G1" and OR_ROOM_NO != "G2" and OR_DUPLICATE_NO != '1' and EXPECT_OR_START_TIME != '0'`, (err, result) => {
         let totalOperation = result.length;
         let urgentOperation = 0;
         let reserveOperation = 0;
@@ -58,7 +58,7 @@ router.get("/",function(req,res){
         }
 
         for(let j = 0; j < totalOperation; j++) {
-            or_room_no_2.push(result[j]['OR_ROOM_NO_2']);
+            or_room_no.push(result[j]['OR_ROOM_NO']);
         }
 
         for(let j = 0; j < totalOperation; j++) {
@@ -156,7 +156,7 @@ router.get("/",function(req,res){
                             if(j + 1 == totalOperation) {
                                 console.log('sucessful');
                                 res.json({
-                                    taiwanDate: global.taiwanDate, chart_no: chart_no, or_code: or_code,or_name: or_name, or_room_no_2: or_room_no_2,
+                                    taiwanDate: global.taiwanDate, chart_no: chart_no, or_code: or_code,or_name: or_name, or_room_no: or_room_no,
                                     bed_no: bed_no, or_apn: new_or_apn, expect_or_start_time: new_expect_or_start_time,duration: duration,
                                     or_type_2: new_or_type_2, return_flag: new_return_flag,  an_class_2: new_an_class_2, npo_date: new_npo_date,
                                     npo_time: new_npo_time, diagnosis_code: diagnosis_code, diagnosis_english_name: diagnosis_english_name,
