@@ -245,7 +245,7 @@
     let information = blockNeedData(operationBlock);
 
     //時間到要更新手術資料的部分
-    var t = 25;
+    var t = 5;
     showTime();
 
     addLattice();
@@ -257,14 +257,11 @@
     //為了要讓進行中的顏色只進行一次的新增規則而設置，會使用到的地方位在color_situation()
     //let frequency = 0;
 
-    //顯示時間軸
-    get_time();
-
     jumpClick();
 
     //移動刀房的函式
     dropAreaCreate(eventContainer);
-    permissionConfirm(permission, taiwanDate, operationBlock);
+    permissionConfirm(permission, taiwanDate);
     
 
     function addLattice() {
@@ -454,6 +451,7 @@ function renderEvent(evt) {
 
 
     eventContainer.appendChild(oneEvent);
+    console.log(1);
 }
 
 function getColumnPosition(roomNumber) {
@@ -477,61 +475,71 @@ function getRowPosition(startTime) {
 }
 
 function showTime(){
-        if(t==0){
-            $.ajax({
-                url: 'http://localhost:3000/schedule/operation/data',
-                method:'GET',
-                dataType:'json',
-                success: function(res) {
 
-                    let result = res;        
-                    
-                    for(let g = 0; g < parseInt(result['totalOperation']); g++) {
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var time = 84.6+hours*120+minutes*2;
+    place_hr(time);
+    colorSituation(hours, minutes);
+    
+    if(t==0){
+        $.ajax({
+            url: 'http://localhost:3000/schedule/operation/data',
+            method:'GET',
+            dataType:'json',
+            success: function(res) {
 
-                        var data = {
-                            id: id,
-                            date: result['taiwanDate'],
-                            chart: result['chart_no'][g],
-                            operationCode: result['or_code'][g],
-                            operationName: result['or_name'][g],
-                            operationRoom: result['or_room_no'][g],
-                            bed: result['bed_no'][g],
-                            time: result['or_apn'][g],
-                            estimateStartTime: result['expect_or_start_time'][g],
-                            estimateTime: result['duration'][g],
-                            operationKind: result['or_type_2'][g],
-                            operationAgain: result['return_flag'][g],
-                            naKind: result['an_class_2'][g],
-                            fastingDate: result['npo_date'][g],
-                            fastingTime: result['npo_time'][g],
-                            diagnosisCode: result['diagnosis_code'][g],
-                            diagnosisName: result['diagnosis_english_name'][g],
-                            doctorName: result['doctor_name'][g],
-                            department: result['department_name'][g],
-                            patientName: result['patient_name'][g],
-                            anaYesNo: result['ana_yes_no'][g]
-                        };
+                let result = res;        
+                
+                for(let g = 0; g < parseInt(result['totalOperation']); g++) {
 
-                        id++;
-                        eventContainer.innerHTML = "";
-                        events = [];
-                        events.push(data);
-                        processEvents();
-                    }
+                    var data = {
+                        id: id,
+                        date: result['taiwanDate'],
+                        chart: result['chart_no'][g],
+                        operationCode: result['or_code'][g],
+                        operationName: result['or_name'][g],
+                        operationRoom: result['or_room_no'][g],
+                        bed: result['bed_no'][g],
+                        time: result['or_apn'][g],
+                        estimateStartTime: result['expect_or_start_time'][g],
+                        estimateTime: result['duration'][g],
+                        operationKind: result['or_type_2'][g],
+                        operationAgain: result['return_flag'][g],
+                        naKind: result['an_class_2'][g],
+                        fastingDate: result['npo_date'][g],
+                        fastingTime: result['npo_time'][g],
+                        diagnosisCode: result['diagnosis_code'][g],
+                        diagnosisName: result['diagnosis_english_name'][g],
+                        doctorName: result['doctor_name'][g],
+                        department: result['department_name'][g],
+                        patientName: result['patient_name'][g],
+                        anaYesNo: result['ana_yes_no'][g]
+                    };
 
-                        loadEvents();
+                    id++;
+                    eventContainer.innerHTML = "";
+                    events = [];
+                    events.push(data);
+                    processEvents();
+                }
 
-                        eventsByDay = {};
-                        id = 0;
-                        operationBlock = document.getElementsByClassName('slot');
-                        information = blockNeedData(operationBlock);
-                        dropAreaCreate(eventContainer);
-                        permissionConfirm(permission, taiwanDate, operationBlock);
+                    loadEvents();
 
-                }, error:function(err) {console.log('error')}
-            });
-            t = 25;
-        };
+                    eventsByDay = {};
+                    id = 0;
+
+                    colorSituation(hours, minutes);
+                    operationBlock = document.getElementsByClassName('slot');
+                    information = blockNeedData(operationBlock);
+                    dropAreaCreate(eventContainer);
+                    permissionConfirm(permission, taiwanDate);
+
+            }, error:function(err) {console.log('error')}
+        });
+        t = 25;
+    };
         document.getElementById('update').innerHTML= t;
         t -= 1;
         setTimeout('showTime()',1000);
@@ -543,17 +551,6 @@ function place_hr(y_pos){
     d.style.top = y_pos+'px';
     d.style.zIndex = 4;
 }
-
-function get_time(){
-    var date = new Date();
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var time = 84.6+hours*120+minutes*2;
-    place_hr(time);
-    colorSituation(hours, minutes);
-    setTimeout("get_time()",1000);
-}
-
 
 function openPopup(evt){
     $('.bed').text(evt.bed);
@@ -720,10 +717,11 @@ function permissionConfirm(permission, date) {
 
         //設定可拖曳的物件
         for(let i = 0; i < dragItem.length; i++) {
+            console.log(dragColor[i].style.background);
             if(dragColor[i].style.background == 'white' &&  information[i]['frequency'] == 0) {
                 dragItem[i].setAttribute('draggable', 'true');
                 dragItem[i].addEventListener('dragstart', e => {
-                target = dragItem[i];
+                    target = dragItem[i];
             })
             }
         }
