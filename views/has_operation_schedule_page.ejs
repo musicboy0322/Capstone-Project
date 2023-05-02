@@ -21,7 +21,12 @@
         </span>
         
         &ensp;
-        <span style= "background:rgb(106, 255, 0)">總人數：<%=totalOperation%> 已開刀：0 常規刀尚有：<%= reserveOperation %>急刀尚有：<%= urgentOperation %></span>
+        <div style= "background:rgb(106, 255, 0); display: inline-block;">
+            總人數：<span class="totalOperation"></span>
+            已開刀：<span class="finishedOperation"></span>
+            常規刀尚有：<span class="regularOperation"></span>
+            急刀尚有：<span class="urgentOperation">0</span> 
+        </div>
         <span style="float:right" class="user">使用者：<%= username%> </span> 
         <button type="button"  style="float:right" class="avtime">手術平均時間</button>
         
@@ -262,6 +267,9 @@
     //移動刀房的函式
     dropAreaCreate(eventContainer);
     permissionConfirm(permission, taiwanDate);
+
+    //動態顯示幕前手術整體情況(總刀數，已開刀，常規刀)
+    calculateOperationAmount();
     
 
     function addLattice() {
@@ -451,7 +459,6 @@ function renderEvent(evt) {
 
 
     eventContainer.appendChild(oneEvent);
-    console.log(1);
 }
 
 function getColumnPosition(roomNumber) {
@@ -535,6 +542,7 @@ function showTime(){
                     information = blockNeedData(operationBlock);
                     dropAreaCreate(eventContainer);
                     permissionConfirm(permission, taiwanDate);
+                    calculateOperationAmount();
 
             }, error:function(err) {console.log('error')}
         });
@@ -717,13 +725,12 @@ function permissionConfirm(permission, date) {
 
         //設定可拖曳的物件
         for(let i = 0; i < dragItem.length; i++) {
-            console.log(dragColor[i].style.background);
             if(dragColor[i].style.background == 'white' &&  information[i]['frequency'] == 0) {
                 dragItem[i].setAttribute('draggable', 'true');
                 dragItem[i].addEventListener('dragstart', e => {
                     target = dragItem[i];
             })
-            }
+        }
         }
         
         //設定可放置的區域
@@ -781,5 +788,24 @@ function jumpClick(){
             top: parseInt(timeLine.style.top) - 480
         });
     }
+
+function calculateOperationAmount() {
+    let total = 0;
+    let regular = 0;
+    let finished = 0;
+
+    let color = document.getElementsByClassName('event-color');
+    let totalOperation = document.getElementsByClassName('totalOperation')[0];
+    let regularOperation = document.getElementsByClassName('regularOperation')[0];
+    let finishedOperation = document.getElementsByClassName('finishedOperation')[0];
+    for(let i = 0; i < color.length; i++) {
+        if(color[i].style.background == 'rgb(238, 238, 238)') finished +=1;
+        if(color[i].style.background != 'rgb(238, 238, 238)') regular += 1;
+    }
+
+    totalOperation.innerHTML = color.length;
+    regularOperation.innerHTML = regular;
+    finishedOperation.innerHTML = finished;
+}
 
 </script>
