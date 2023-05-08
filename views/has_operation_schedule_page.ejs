@@ -386,7 +386,6 @@ function loadEvents() {
         });
     });
 
-    console.log('----------');
 }
 
 function renderEvent(evt) {
@@ -422,8 +421,6 @@ function renderEvent(evt) {
     eventEstimateTime.innerHTML = `時間: ${evt.estimateTime}分鐘`;
     eventAna.innerHTML = `麻醉: ${evt.anaYesNo}`;
     eventOperationName.innerHTML = `手術: ${evt.operationName}`;
-
-    console.log(evt.operationName);
     
     eventDoctor.setAttribute("class", "event-docotr");
     eventPatient.setAttribute("class", "event-patient");
@@ -491,8 +488,7 @@ function showTime(){
     var minutes = date.getMinutes();
     var time = 84.6+hours*120+minutes*2;
     place_hr(time);
-    //colorSituation(hours, minutes);
-    
+        
     if(t==0){
         $.ajax({
             url: 'http://localhost:3000/schedule/operation/data',
@@ -549,7 +545,7 @@ function showTime(){
 
             }, error:function(err) {console.log('error')}
         });
-        t = 5;
+        t = 25;
     };
         document.getElementById('update').innerHTML= t;
         t -= 1;
@@ -724,9 +720,11 @@ function permissionConfirm(permission, date) {
         let dropArea = document.getElementsByClassName('dropBlock');
         let target;
 
+
+        //逾時顏色 rgb(255, 242, 204)
         //設定可拖曳的物件
         for(let i = 0; i < dragItem.length; i++) {
-            if(dragColor[i].style.background == 'white' &&  information[i]['frequency'] == 0) {
+            if((dragColor[i].style.background == 'white' || dragColor[i].style.background == 'rgb(255, 242, 204)') &&  information[i]['frequency'] == 0) {
                 dragItem[i].setAttribute('draggable', 'true');
                 dragItem[i].addEventListener('dragstart', e => {
                     target = dragItem[i];
