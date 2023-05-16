@@ -28,8 +28,8 @@
             急刀尚有：<span class="urgentOperation">0</span> 
         </div>
         <span style="float:right" class="user">使用者：<%= username%> </span> 
-        <button type="button"  style="float:right" class="avtime">手術平均時間</button>
-        
+
+        <button id="avtime" style="float:right">手術平均時間</button>
     
     </header>
     <div class="calendar-container">
@@ -257,6 +257,7 @@
 
     //顯示詳細資料的部分
     let popup = document.getElementById("popup");
+    //let poputime = document.getElementById("popup");
 
     //為了要讓進行中的顏色只進行一次的新增規則而設置，會使用到的地方位在color_situation()
     //let frequency = 0;
@@ -288,6 +289,9 @@
         }
         
     }
+
+    //手術平均時間
+    let poptime = document.getElementById("popup");
 
     //各式各樣的函式
     function inputRoom() {
@@ -535,17 +539,18 @@ function showTime(){
 
                     eventsByDay = {};
                     id = 0;
-
+                    cleanUpdateCss();
                     operationBlock = document.getElementsByClassName('slot');
                     information = blockNeedData(operationBlock);
                     colorSituation(hours, minutes);
                     dropAreaCreate(eventContainer);
                     permissionConfirm(permission, taiwanDate);
                     calculateOperationAmount();
+                    
 
             }, error:function(err) {console.log('error')}
         });
-        t = 25;
+        t = 10;
     };
         document.getElementById('update').innerHTML= t;
         t -= 1;
@@ -605,11 +610,12 @@ function colorSituation(hour, minute) {
                 //結束
                 //進行中轉結束判斷式
                 if(information[k]['frequency'] == 1) {
+                    console.log('end');
                     let number = operationBlock[k]['id'].split('number')[1];
                     let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
                     for(let i = 0; i < cssRule[0].cssRules; i++) {
                         if(cssRule[0].cssRules[i].cssText == `#${operationBlock[k]['id']} .event-color { background-color: #6cc570 !important ; animation: conduct${number} ${currentDuration}s linear; }`) {
-                            cssRule[0].deleteRule(i);
+                            //cssRule[0].deleteRule(i);
                         }
                     }
                     information[k]['frequency'] == 0;
@@ -720,8 +726,6 @@ function permissionConfirm(permission, date) {
         let dropArea = document.getElementsByClassName('dropBlock');
         let target;
 
-
-        //逾時顏色 rgb(255, 242, 204)
         //設定可拖曳的物件
         for(let i = 0; i < dragItem.length; i++) {
             if((dragColor[i].style.background == 'white' || dragColor[i].style.background == 'rgb(255, 242, 204)') &&  information[i]['frequency'] == 0) {
@@ -806,5 +810,14 @@ function calculateOperationAmount() {
     regularOperation.innerHTML = regular;
     finishedOperation.innerHTML = finished;
 }
+
+function cleanUpdateCss() {
+    let length = document.styleSheets[0].cssRules.length;
+
+    while(document.styleSheets[0].cssRules.length > 47) {
+        document.styleSheets[0].deleteRule(47);
+    } 
+}
+
 
 </script>
