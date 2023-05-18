@@ -593,6 +593,7 @@ function closePopup(){
     popup.classList.remove("open-popup");
 }
 
+/*
 function colorSituation(hour, minute) {
     let operationColor = document.getElementsByClassName('event-color');
     let cssRule = document.styleSheets;
@@ -660,6 +661,41 @@ function colorSituation(hour, minute) {
         }
     }
 }
+*/
+
+function colorSituation(hour, minute) {
+    let operationColor = document.getElementsByClassName('event-color');
+    let cssRule = document.styleSheets;
+    let currentTimePosition = hour * 60 + minute;
+
+    for(let k = 0; k < information.length; k++) {
+        if(currentTimePosition > information[k]['estimateStart'] && information[k]['realStart'] == 0) {
+            operationColor[k]['style']['backgroundColor'] = '#fff2cc';
+        };
+
+        if(currentTimePosition > information[k]['shouldEnd'] && information[k]['realStart'] !=0 && information[k]['realEnd'] == 0) {
+            operationColor[k]['style']['backgroundColor'] = '#f44336';
+            continue;
+        }
+
+        if(currentTimePosition > information[k]['realStart'] && information[k]['realStart'] != 0 && information[k]['realEnd'] == 0) {
+            let number = operationBlock[k]['id'].split('number')[1];
+            let length = cssRule[0].cssRules.length;
+            let currentDuration = (information[k]['duration'] - (currentTimePosition - information[k]['realStart'])) * 60;
+            let currentPassTime = -(currentTimePosition - information[k]['realStart']) * 60;
+            
+            cssRule[0].insertRule(`#${operationBlock[k]['id']} .event-color{background-color: #6cc570 !important; animation: conduct${number} ${currentDuration}s linear;}`, length);
+            cssRule[0].insertRule(`@keyframes conduct${number} {from {height:${(currentTimePosition - information[k]['realStart']) / information[k]['duration'] * 100}%} to {height: 100%;}}`, length + 1);
+
+            information[k]['frequency'] = 1;
+        }
+
+        if(currentTimePosition > information[k]['realEnd'] && information[k]['realEnd'] != 0) {
+            operationColor[k]['style']['backgroundColor'] = '#eeeeee';
+        }  
+    }
+}
+
 
 function blockNeedData(operationBlock) {
     let blocks = [];
