@@ -246,14 +246,14 @@
     //inputRoom();
 
     //下面 block_need_data 和 color_situation 所會需要的資料
-    let operationBlock = document.getElementsByClassName('slot');
-    let information = blockNeedData(operationBlock);
+    //let operationBlock = document.getElementsByClassName('slot');
+    //let information = blockNeedData(operationBlock);
 
     //時間到要更新手術資料的部分
     var t = 0;
     showTime();
 
-    addLattice();
+    //addLattice();
 
     //顯示詳細資料的部分
     let popup = document.getElementById("popup");
@@ -494,6 +494,8 @@ function showTime(){
     place_hr(time);
         
     if(t==0){
+        
+
         $.ajax({
             url: 'http://localhost:3000/schedule/operation/data',
             method:'GET',
@@ -525,7 +527,9 @@ function showTime(){
                         doctorName: result['doctor_name'][g],
                         department: result['department_name'][g],
                         patientName: result['patient_name'][g],
-                        anaYesNo: result['ana_yes_no'][g]
+                        anaYesNo: result['ana_yes_no'][g],
+                        realStartTime: result['or_in_time'][g],
+                        realEndTime: result['or_out_time'][g]
                     };
 
                     id++;
@@ -540,11 +544,12 @@ function showTime(){
                     eventsByDay = {};
                     id = 0;
                     cleanUpdateCss();
-                    operationBlock = document.getElementsByClassName('slot');
-                    information = blockNeedData(operationBlock);
-                    colorSituation(hours, minutes);
+                    let operationBlock = document.getElementsByClassName('slot');
+                    let information = blockNeedData(operationBlock, result);
+                    console.log(information[25]);
+                    colorSituation(hours, minutes, information, operationBlock);
                     dropAreaCreate(eventContainer);
-                    permissionConfirm(permission, taiwanDate);
+                    permissionConfirm(permission, taiwanDate, information);
                     calculateOperationAmount();
                     
 
@@ -663,7 +668,7 @@ function colorSituation(hour, minute) {
 }
 */
 
-function colorSituation(hour, minute) {
+function colorSituation(hour, minute, information, operationBlock) {
     let operationColor = document.getElementsByClassName('event-color');
     let cssRule = document.styleSheets;
     let currentTimePosition = hour * 60 + minute;
@@ -697,7 +702,7 @@ function colorSituation(hour, minute) {
 }
 
 
-function blockNeedData(operationBlock) {
+function blockNeedData(operationBlock, result) {
     let blocks = [];
     
     for(let j = 0; j < operationBlock.length; j++) {
@@ -708,8 +713,8 @@ function blockNeedData(operationBlock) {
         let estimateStart = parseInt(operationBlock[j]['style']['grid-row-start']);
 
         
-        let realStart = getRowPosition(realStartTime[number[1]]);
-        let realEnd = getRowPosition(realEndTime[number[1]]);
+        let realStart = getRowPosition(result['or_in_time'][number[1]]);
+        let realEnd = getRowPosition(result['or_out_time'][number[1]]);
 
         let shouldEnd = realStart + height / 2;
         let column = parseInt(operationBlock[j]['style']['grid-column-start']);
@@ -744,7 +749,7 @@ function dropAreaCreate(dropPlace) {
     }
 }
 
-function permissionConfirm(permission, date) {
+function permissionConfirm(permission, date, information) {
     let dateMove = new Date();
     let currentDay = dateMove.getDate().toString();
     let currentMonth = (dateMove.getMonth() + 1).toString();
