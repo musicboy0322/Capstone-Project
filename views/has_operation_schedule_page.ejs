@@ -29,7 +29,7 @@
         </div>
         <span style="float:right" class="user">使用者：<%= username%> </span> 
 
-        <button id="avtime" style="float:right">手術平均時間</button>
+        <button id="avTime" style="float:right">手術平均時間</button>
     
     </header>
     <div class="calendar-container">
@@ -153,15 +153,6 @@
                 </tr>
             </table>
             <br>
-            <form action="" method="post">
-                <select name="situation" id="situation">
-                    <option selected>預約</option>
-                    <option>叫刀</option>
-                    <option>結束</option>
-                    <option>返室</option>
-                    <option>恢復中</option>
-                </select>
-            </form>
             <br>
             <center><button class='close' type="button" onclick="closePopup()">關閉</button></center>
         </div>
@@ -194,6 +185,19 @@
                 </div>
             </form>
         </div>
+
+        <dialog id="poptime">
+            <label>
+                手術日期:
+                <input class="avMonth" type="month">
+            </label>
+            <br>
+            <br>
+            <center>
+                <button id="avDownload">下載</button>
+                <button id="avClose">取消</button>
+            </center>
+        </dialog>
 
     </div>
 
@@ -263,6 +267,8 @@
     //let frequency = 0;
 
     jumpClick();
+
+    operationAve();
 
     //移動刀房的函式
     //dropAreaCreate(eventContainer);
@@ -546,7 +552,6 @@ function showTime(){
                     cleanUpdateCss();
                     let operationBlock = document.getElementsByClassName('slot');
                     let information = blockNeedData(operationBlock, result);
-                    console.log(information[25]);
                     colorSituation(hours, minutes, information, operationBlock);
                     dropAreaCreate(eventContainer);
                     permissionConfirm(permission, taiwanDate, information);
@@ -858,6 +863,56 @@ function cleanUpdateCss() {
     while(document.styleSheets[0].cssRules.length > 47) {
         document.styleSheets[0].deleteRule(47);
     } 
+}
+
+function operationAve() {
+    let avTime = document.querySelector('#avTime');
+    let poptime = document.querySelector('#poptime');
+    let avClose = document.querySelector('#avClose');
+    let avDownload = document.querySelector('#avDownload');
+
+    avTime.addEventListener('click', () => {
+        poptime.showModal();
+    });
+
+    avClose.addEventListener('click', () => {
+        poptime.close();
+    });
+
+    avDownload.addEventListener('click', () => {
+        let avMonth = document.querySelector('.avMonth');
+
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/schedule/operation/opavg',
+            dataType: 'json',
+            data: {
+                month: `${avMonth.value}`
+            },
+            success: (res) => {
+                let fileName = 'operationAvg.csv';
+                let data = '手術日期,病歷號,JT主手術碼,主手術名稱,手術別,午別,房間,床號,成本中心,科別名稱,主刀醫生,預計手術開始時間,逾時否,到達等候室時間,進手術室時間,麻醉開始時間,TIME OUT時間,麻醉結束時間,出手術室時間,預計手術時間(分),手術時間(分)';
+                
+                for(let i = 0; i < res['or_date'].length; i++) {
+                    data = data + '\n' + res['or_date'][i] + ',' + res['chart_no'][i] + ',' + `"${res['or_name'][i]}"` + ',' + `"${res['or_name'][i]}"` + ',' + 
+                    res['or_type_2'][i]+ ',' + res['or_apn'][i] + ',' + res['or_room_no'][i]+ ',' + res['bed_no'][i] + ',' + res['div_no'][i] + ',' +
+                    res['or_div_no'][i] + ',' + res['or_doctor_no'][i] + ',' + res['expect_or_start_time'][i] + ',' + res['overtime_yes_no'][i] + ',' + 
+                    res['or_in_wait_time'][i] + ','  + res['or_in_time'][i] + ',' + res['an_start_time'][i] + ',' + res['timeout'][i] + ',' +
+                    res['an_end_time'][i] + ',' + res['or_out_time'][i] + ',' + res['duration'][i] + ',' + res['actual_duration'][i];
+                }
+
+                let blob = new Blob([data], {
+                    type: 'application/octet-stream;charset="ANSI"'
+                });
+                let href = URL.createObjectURL(blob);
+                let link = document.createElement('a');
+                document.body.appendChild(link);
+                link.href = href;
+                link.download = fileName;
+                link.click();
+            }
+        });
+    });
 }
 
 

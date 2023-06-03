@@ -92,6 +92,16 @@ const date_change = array => {
     return array;
 }
 
+const turn_to_minute = array => {
+    for(let i = 0; i < array.length; i++) {
+        let hour = parseInt(array[i].split(':')[0]);
+        let minute = parseInt(array[i].split(':')[1]);
+        hour = hour * 60;
+        array[i] = hour + minute;
+    }
+    return array;
+}
+
 //for own database's data
 const splitData = (operationData , totalOperation) => {
     bed = []
@@ -181,4 +191,4 @@ const splitData = (operationData , totalOperation) => {
             }
 }
 
-module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change, splitData};
+module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change, splitData, turn_to_minute};
