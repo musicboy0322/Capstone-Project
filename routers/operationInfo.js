@@ -4,11 +4,6 @@ const bodyParser = require("body-parser");
 const encoder = bodyParser.urlencoded();
 const connection = require('../database_connecting');
 const changeData = require('../content_change');
-const excel = require('exceljs');
-
-//excel部分
-let workbook = new excel.Workbook();
-let sheet = workbook.addWorksheet('工作表1');
 
 const needPtor = 'OR_DATE, CHART_NO, OR_TYPE_2, OR_APN, OR_ROOM_NO, BED_NO, DIV_NO, EXPECT_OR_START_TIME, EXPECT_OR_END_TIME, OR_IN_WAIT_TIME, OR_IN_TIME, AN_START_TIME, AN_END_TIME, OR_OUT_TIME';
 const needPtordrev = 'OR_NAME, OR_DIV_NO, OR_DOCTOR_NO';
@@ -168,22 +163,6 @@ router.post('/',encoder,(req, res) => {
     
             for(let i = 0; i < result.length; i++) {
                 or_doctor_no.push(result[i]['OR_DOCTOR_NO']);
-            }
-
-            sheet.addTable({
-                name: 'operationAve',
-                ref: 'A1',
-                columns: [{name: '手術日期'}, {name: '病歷號'}, {name: 'JT主手術碼'}, {name: '主手術名稱'}, {name: '手術別'}, {name: '午別'},
-                    {name: '房間'}, {name: '床號'}, {name: '成本中心'}, {name: '科別名稱'}, {name: '主刀醫生'}, {name: '預計手術開始時間'},
-                    {name: '逾時否'}, {name: '到達等候室時間'}, {name: '進手術室時間'}, {name: '麻醉開始時間'}, {name: 'TIME OUT時間'},
-                    {name: '麻醉結束時間'}, {name: '出手術室時間'}, {name: '預計手術時間(分)'}, {name: '手術時間(分)'}],
-                rows: []
-            });
-
-            for(let i = 0; i < or_date.length; i++) {
-                sheet.addRow([or_date[i], chart_no[i], or_name[i], or_name[i], or_type_2[i], or_apn[i], or_room_no[i], bed_no[i], div_no[i],
-                    or_div_no[i],or_doctor_no[i], expect_or_start_time[i], overtime_yes_no[i], or_in_wait_time[i], or_in_time[i], an_start_time[i],
-                    timeout[i], an_end_time[i], or_out_time[i], duration[i], actual_duration[i]]);
             }
 
             res.json({

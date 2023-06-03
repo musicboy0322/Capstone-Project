@@ -138,13 +138,13 @@
 
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:3000/schedule/operation/opavg',
+                url: 'http://localhost:3000/schedule/operation/operationInfo',
                 dataType: 'json',
                 data: {
                     month: `${avMonth.value}`
                 },
                 success: (res) => {
-                    let fileName = 'operationAvg.csv';
+                    let fileName = 'operationInfo.csv';
                     let data = '手術日期,病歷號,JT主手術碼,主手術名稱,手術別,午別,房間,床號,成本中心,科別名稱,主刀醫生,預計手術開始時間,逾時否,到達等候室時間,進手術室時間,麻醉開始時間,TIME OUT時間,麻醉結束時間,出手術室時間,預計手術時間(分),手術時間(分)';
                     
                     for(let i = 0; i < res['or_date'].length; i++) {
@@ -166,6 +166,8 @@
                     link.click();
                 }
             });
+
+            poptime.close();
         })
     
 
