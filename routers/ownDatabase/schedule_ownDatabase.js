@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require("body-parser");
 const encoder = bodyParser.urlencoded();
-const connect = require('../database_connecting');
+const connect = require('../../database_connecting');
 
 router.get("/",function(req,res){
     var room = [];

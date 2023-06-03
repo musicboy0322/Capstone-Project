@@ -84,6 +84,28 @@ const time_change = array => {
     return array;
 }
 
+const time_change_single = number => {
+    if(number.length == 3) {
+        number = '0' + number;
+        split = number.split('');
+        number = split[0] + split[1] + ':' + split[2] + split[3];
+    } else if(number.length == 2) {
+        number = '00' + number;
+        split = number.split('');
+        number = split[0] + split[1] + ':' + split[2] + split[3];
+    } else if(number.length == 1) {
+        number = '000' + number;
+        split = number.split('');
+        number = split[0] + split[1] + ':' + split[2] + split[3];
+    }
+    else {
+        split = number.split('');
+        number = split[0] + split[1] + ':' + split[2] + split[3];
+    }
+
+    return number;
+}
+
 const date_change = array => {
     for(let j = 0; j < array.length; j++) {
         split = array[j].split('');
@@ -191,4 +213,4 @@ const splitData = (operationData , totalOperation) => {
             }
 }
 
-module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change, splitData, turn_to_minute};
+module.exports = {or_apn_change, or_type_2_change, return_flag_change, an_class_2_change, time_change, date_change, splitData, turn_to_minute, time_change_single};

@@ -5,7 +5,8 @@ const initial = require('./routers/initial');
 const schedule = require('./routers/schedule');
 const operation = require('./routers/operation');
 const data = require('./routers/data');
-const opavg = require('./routers/operationInfo');
+const opInfo = require('./routers/operationInfo');
+const opAvg = require('./routers/operationAvg');
 
 require('events').EventEmitter.prototype._maxListeners = 100;
 
@@ -17,6 +18,8 @@ app.use('/', initial);
 app.use('/schedule', schedule);
 app.use('/schedule/operation', operation);
 app.use('/schedule/operation/data', data);
-app.use('/schedule/operation/operationInfo', opavg);
+app.use('/schedule/operation/operationInfo', opInfo);
+app.use('/schedule/operation/operationAvg', opAvg);
+
 
 app.listen(3000);

@@ -135,7 +135,7 @@
 
         avDownload.addEventListener('click', () => {
             let avMonth = document.querySelector('.avMonth');
-
+            
             $.ajax({
                 type: 'POST',
                 url: 'http://localhost:3000/schedule/operation/operationInfo',
@@ -144,7 +144,7 @@
                     month: `${avMonth.value}`
                 },
                 success: (res) => {
-                    let fileName = 'operationInfo.csv';
+                    let fileName = '手術病人總覽.csv';
                     let data = '手術日期,病歷號,JT主手術碼,主手術名稱,手術別,午別,房間,床號,成本中心,科別名稱,主刀醫生,預計手術開始時間,逾時否,到達等候室時間,進手術室時間,麻醉開始時間,TIME OUT時間,麻醉結束時間,出手術室時間,預計手術時間(分),手術時間(分)';
                     
                     for(let i = 0; i < res['or_date'].length; i++) {
@@ -166,6 +166,32 @@
                     link.click();
                 }
             });
+            
+
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:3000/schedule/operation/operationAvg',
+                dataType: 'json',
+                data: {
+                    month: `${avMonth.value}`
+                },
+                success: res => {
+                    let fileName = '手術平均時間.csv';
+                    let data = '主刀醫師資料, 主手術碼, 刀數, 平均時間';
+                    for(let j = 0; j < res['doctor'].length; j++) {
+                        data = data + '\n' + res['doctor'][j] + ',' + res['operation'][j] + ',' + `"${res['operationAmount'][j]}"` + ',' + `"${res['operationAvgTime'][j]}"`;
+                    }
+                    let blob = new Blob([data], {
+                        type: 'application/octet-stream;charset="ANSI"'
+                    });
+                    let href = URL.createObjectURL(blob);
+                    let link = document.createElement('a');
+                    document.body.appendChild(link);
+                    link.href = href;
+                    link.download = fileName;
+                    link.click();
+                }
+            })
 
             poptime.close();
         })

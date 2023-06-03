@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const connection = require('../database_connecting');
-const splitData = require('../content_change');
+const connection = require('../../database_connecting');
+const splitData = require('../../content_change');
 
 router.get("/", function(req, res) {
 
