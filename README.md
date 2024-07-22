@@ -30,5 +30,7 @@
     ![截圖 2023-03-21 下午3 56 59](https://user-images.githubusercontent.com/75659334/226546723-f8a7fb11-1d78-448b-b9b4-67fb43f62e16.png)
 
   
-* Demo 影片：https://youtu.be/vjVW0faqb7A
+* Demo 影片：
+ * 第一學期成果：https://youtu.be/vjVW0faqb7A
+ * 第二學期成果：https://www.youtube.com/watch?v=XEpWfiQ8uOs
   
