@@ -1,4 +1,4 @@
-# Optimization of Hospital Surgery Scheduling System(English Version) 
+# Optimization of Hospital Surgery Scheduling Website(English Version) 
 
 * Current Problem：The current hospital surgery scheduling system is not intuitive, which makes it inconvenient for medical staff to manage operating rooms. Therefore, this project was initiated to solve this problem.
 
